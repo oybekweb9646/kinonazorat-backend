@@ -8,6 +8,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 readonly class RequestService
 {
@@ -43,6 +44,7 @@ readonly class RequestService
 
     /**
      * @param string $access_token
+     * @param $stir
      * @return FetchAuthorityDto
      * @throws ConnectionException
      */
@@ -52,6 +54,10 @@ readonly class RequestService
             ->post($this->serviceUrl, $this->getFormParamsForAuthority($stir));
 
         $this->_throwException($httpResponse);
+
+        if (empty($httpResponse->json()['response'])) {
+            throw new NotFoundResourceException('Bunday tashkilot mavjud emas.');
+        }
 
         return new FetchAuthorityDto($httpResponse->json());
     }

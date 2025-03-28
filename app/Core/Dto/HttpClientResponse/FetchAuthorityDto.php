@@ -5,7 +5,7 @@ namespace App\Core\Dto\HttpClientResponse;
 class FetchAuthorityDto
 {
     public function __construct(
-        protected array $response,
+        protected ?array $response,
         public ?string  $name = null {
             get {
                 return $this->name;
