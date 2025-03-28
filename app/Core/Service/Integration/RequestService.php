@@ -45,10 +45,10 @@ readonly class RequestService
     /**
      * @param string $access_token
      * @param $stir
-     * @return NotFoundResourceException|FetchAuthorityDto
+     * @return FetchAuthorityDto
      * @throws ConnectionException
      */
-    public function fetchAuthorityInfo(string $access_token, $stir): NotFoundResourceException|FetchAuthorityDto
+    public function fetchAuthorityInfo(string $access_token, $stir): FetchAuthorityDto
     {
         $httpResponse = Http::withToken($access_token)
             ->post($this->serviceUrl, $this->getFormParamsForAuthority($stir));
@@ -56,7 +56,7 @@ readonly class RequestService
         $this->_throwException($httpResponse);
 
         if (empty($httpResponse->json()['response'])) {
-            throw new NotFoundResourceException('Bunday stirli tashkilot yo\'q');
+            throw new NotFoundResourceException('Bunday tashkilot mavjud emas');
         }
 
         return new FetchAuthorityDto($httpResponse->json());
