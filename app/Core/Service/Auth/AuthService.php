@@ -53,7 +53,7 @@ class AuthService implements AuthContract
         }
 
         if (empty($user)) {
-            abort(403, __('client.Forbidden. The reason is that user is not found'));
+            abort(403, __('client.Forbidden. The reason is that user is not found.'));
         }
 
         if (!$user->isActive()) {
