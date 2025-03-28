@@ -48,13 +48,13 @@ readonly class RequestService
      * @return FetchAuthorityDto
      * @throws ConnectionException
      */
-    public function fetchAuthorityInfo(string $access_token, $stir): FetchAuthorityDto
+    public function fetchAuthorityInfo(string $access_token, $stir)
     {
         $httpResponse = Http::withToken($access_token)
             ->post($this->serviceUrl, $this->getFormParamsForAuthority($stir));
 
         $this->_throwException($httpResponse);
-
+ dd($httpResponse->json());
         if (empty($httpResponse->json()['response'])) {
             throw new NotFoundResourceException('Bunday tashkilot mavjud emas.');
         }
