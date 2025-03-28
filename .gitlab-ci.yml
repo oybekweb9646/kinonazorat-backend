@@ -1,0 +1,61 @@
+stages:
+  - app_clear_cache
+  - run_seeder
+  - deploy_prod
+  - run_migration
+  - composer_install
+
+deploy-prod:
+  stage: deploy_prod
+  script:
+    - rsync -av --itemize-changes --no-perms --no-owner --no-group --filter=':- .gitignore' --delete-after $CI_PROJECT_DIR/ /var/www/prod/aoka-back
+    - echo "Application successfully deployed on prod server"
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+  when: manual
+  tags:
+    - aoka-prod
+
+composer-install:
+  stage: composer_install
+  script:
+    - docker exec aoka_php_cli  composer install
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+  when: manual
+  tags:
+    - aoka-prod
+
+run-migration:
+  stage: run_migration
+  script:
+    - docker exec aoka_php_cli  php artisan migrate --force
+    - echo "Successful done run migration"
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+  when: manual
+  tags:
+    - aoka-prod
+
+cache-clear-app:
+  stage: app_clear_cache
+  script:
+    - docker exec aoka_php_cli  php artisan optimize:clear
+    - docker exec aoka_php_cli  php artisan cache:clear
+    - echo "Successful done cleared cache"
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+  when: manual
+  tags:
+    - aoka-prod
+
+run-seeder:
+  stage: run_seeder
+  script:
+    - docker exec aoka_php_cli  php artisan db:seed
+    - echo "Successful done db:seed command"
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+  when: manual
+  tags:
+    - aoka-prod
