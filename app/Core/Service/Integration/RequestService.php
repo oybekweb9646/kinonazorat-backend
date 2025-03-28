@@ -25,10 +25,11 @@ readonly class RequestService
     }
 
     /**
-     * @return FetchAccessTokenMibDto|NotFoundResourceException
+     * @param string $code
+     * @return FetchAccessTokenMibDto
      * @throws ConnectionException
      */
-    public function fetchAccessToken(): FetchAccessTokenMibDto|NotFoundResourceException
+    public function fetchAccessToken(): FetchAccessTokenMibDto
     {
         $httpResponse = Http::asForm()
             ->withHeaders([
@@ -38,23 +39,25 @@ readonly class RequestService
 
         $this->_throwException($httpResponse);
 
-        if (empty($httpResponse->json()['response'])) {
-            return new NotFoundResourceException('Bunday stirli tashkilot yo\'q');
-        }
         return new FetchAccessTokenMibDto($httpResponse->json());
     }
 
     /**
      * @param string $access_token
-     * @return FetchAuthorityDto
+     * @param $stir
+     * @return NotFoundResourceException|FetchAuthorityDto
      * @throws ConnectionException
      */
-    public function fetchAuthorityInfo(string $access_token, $stir): FetchAuthorityDto
+    public function fetchAuthorityInfo(string $access_token, $stir): NotFoundResourceException|FetchAuthorityDto
     {
         $httpResponse = Http::withToken($access_token)
             ->post($this->serviceUrl, $this->getFormParamsForAuthority($stir));
 
         $this->_throwException($httpResponse);
+
+        if (empty($httpResponse->json()['response'])) {
+            return new NotFoundResourceException('Bunday stirli tashkilot yo\'q');
+        }
 
         return new FetchAuthorityDto($httpResponse->json());
     }
