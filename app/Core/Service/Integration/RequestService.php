@@ -54,8 +54,7 @@ readonly class RequestService
             ->post($this->serviceUrl, $this->getFormParamsForAuthority($stir));
 
         $this->_throwException($httpResponse);
- dd($httpResponse->json());
-        if (empty($httpResponse->json()['response'])) {
+        if (empty($httpResponse->json())) {
             throw new NotFoundResourceException('Bunday tashkilot mavjud emas.');
         }
 
