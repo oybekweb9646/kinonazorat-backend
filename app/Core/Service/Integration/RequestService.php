@@ -8,6 +8,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 readonly class RequestService
 {
@@ -24,11 +25,10 @@ readonly class RequestService
     }
 
     /**
-     * @param string $code
-     * @return FetchAccessTokenMibDto
+     * @return FetchAccessTokenMibDto|NotFoundResourceException
      * @throws ConnectionException
      */
-    public function fetchAccessToken(): FetchAccessTokenMibDto
+    public function fetchAccessToken(): FetchAccessTokenMibDto|NotFoundResourceException
     {
         $httpResponse = Http::asForm()
             ->withHeaders([
@@ -38,6 +38,9 @@ readonly class RequestService
 
         $this->_throwException($httpResponse);
 
+        if (empty($httpResponse->json()['response'])) {
+            return new NotFoundResourceException('Bunday stirli tashkilot yo\'q');
+        }
         return new FetchAccessTokenMibDto($httpResponse->json());
     }
 
