@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Core\Service\Integration;
+
+use App\Core\Helpers\DB\Transaction;
+use App\Core\Repository\Authority\AuthorityRepository;
+use App\Models\Authority;
+use Illuminate\Http\Client\ConnectionException;
+
+readonly class MibService
+{
+    public function __construct(
+        protected Transaction         $transaction,
+        protected AuthorityRepository $authorityRepository,
+        protected RequestService      $requestService,
+    )
+    {
+    }
+
+    /**
+     * @throws ConnectionException
+     */
+    public function checkAuthority($stir)
+    {
+        $fetAccessTokenDto = $this->requestService->fetchAccessToken();
+
+        $authorityInfo = $this->requestService->fetchAuthorityInfo($fetAccessTokenDto->access_token, $stir);
+        $authority = $this->authorityRepository->findByStir($stir);
+
+        if (is_null($authority)) {
+            $authority = new Authority();
+        }
+
+        $authority->fill([
+            'stir' => $authorityInfo->stir,
+            'name_uz' => $authorityInfo->name,
+            'name_ru' => $authorityInfo->name,
+            'name_uzc' => $authorityInfo->name,
+            'billing_address' => $authorityInfo->billing_address ?? null,
+            'billing_soato' => $authorityInfo->billing_soato ?? null,
+            'director_address' => $authorityInfo->director_address ?? null,
+            'director_soato' => $authorityInfo->director_soato ?? null,
+            'director_lastName' => $authorityInfo->director_lastName ?? null,
+            'director_middleName' => $authorityInfo->director_middleName ?? null,
+            'director_firstName' => $authorityInfo->director_firstName ?? null,
+            'director_gender' => $authorityInfo->director_gender ?? null,
+            'director_nationality' => $authorityInfo->director_nationality ?? null,
+            'director_citizenship' => $authorityInfo->director_citizenship ?? null,
+            'director_passportNumber' => $authorityInfo->director_passportNumber ?? null,
+            'director_stir' => $authorityInfo->director_stir ?? null,
+            'director_pinfl' => $authorityInfo->director_pinfl ?? null,
+            'director_countryCode' => $authorityInfo->director_countryCode ?? null,
+            'director_passportSeries' => $authorityInfo->director_passportSeries ?? null,
+        ]);
+
+        $this->transaction->wrap(function () use ($authority) {
+            $authority->save();
+        });
+
+        return $authority;
+    }
+}

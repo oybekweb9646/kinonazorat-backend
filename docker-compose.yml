@@ -1,0 +1,100 @@
+services:
+  php:
+    container_name: aoka_php_fpm
+    build:
+      context: docker/php8.4
+      dockerfile: php-fpm-local.docker
+    volumes:
+      - ".:/var/www/app"
+      - "./docker/php8.4/config/php.ini-${APP_ENV}:${PHP_INI_DIR:-default}/php.ini:ro"
+      - "./docker/php8.4/config/pool.d/www.conf-${APP_ENV}:${PHP_FPM_DIR:-default}/www.conf:ro"
+    working_dir: /var/www/app
+    tty: true
+    extra_hosts:
+        - "apimgw.egov.uz:10.190.44.4"
+        - "iskm.egov.uz:10.190.44.4"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - aoka_network
+  php-cli:
+    container_name: aoka_php_cli
+    build:
+      context: docker/php8.4
+      dockerfile: php-cli-local.docker
+    volumes:
+      - ".:/var/www/app"
+      - "./docker/php8.4/config/php-cli.ini-${APP_ENV}:${PHP_INI_DIR}/php.ini:ro"
+    working_dir: /var/www/app
+    restart: unless-stopped
+    tty: true
+    extra_hosts:
+        - "apimgw.egov.uz:10.190.44.4"
+        - "iskm.egov.uz:10.190.44.4"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - aoka_network
+  nginx:
+    container_name: aoka_nginx
+    build:
+      context: ./docker/nginx
+      dockerfile: nginx.docker
+    ports:
+      - "${NGINX_LOCAL_PORT:-12002}:80"
+    volumes:
+      - "./:/var/www/app"
+      - "./docker/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+    depends_on:
+      - php
+    networks:
+      - aoka_network
+  db:
+    container_name: aoka_database
+    image: postgres:16-alpine
+    ports:
+      - "${DB_LOCAL_PORT:-5436}:5432"
+    volumes:
+      - "aoka_database:/var/lib/postgresql/data"
+      - "./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf"
+      - "./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf"
+    environment:
+      PGUSER: ${DB_USERNAME:-root}
+      POSTGRES_DB: ${DB_DATABASE:-aoka_database}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret!}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "${DB_DATABASE:-aoka_database}" ]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+    networks:
+      - aoka_network
+volumes:
+  aoka_database:
+    external: true
+
+networks:
+  aoka_network:
+    external: true

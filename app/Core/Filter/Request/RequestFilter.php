@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Core\Filter\Request;
+
+use App\Core\Filter\BaseFilter;
+use App\Core\Helpers\Lang\LanguageHelper;
+use App\Models\Request;
+use Illuminate\Database\Eloquent\Builder as BuilderAlias;
+
+class RequestFilter extends BaseFilter
+{
+    protected function getBaseQuery(): BuilderAlias
+    {
+        $name = LanguageHelper::getName();
+        return Request::query()
+            ->with([
+                'indicatorType' => function ($query) use ($name) {
+                    $query->select(['id', $name . ' as name']);
+                },
+                'authority' => function ($query) use ($name) {
+                    $query->select(['id', $name . ' as name', '*']);
+                },
+                'createdBy'
+            ]);
+    }
+
+    /**
+     * Apply filter conditions based on the request.
+     *
+     * @return $this
+     */
+    public function apply(): self
+    {
+        $this->request->whenFilled('stir', function ($value) {
+            $this->query->where('stir', 'ilike', '%' . $value . '%');
+        });
+
+        $this->request->whenFilled('max_score', function ($value) {
+            $this->query->where('score', '<=', $value);
+        });
+
+        $this->request->whenFilled('status', function ($value) {
+            $this->query->where('status', $value);
+        });
+
+        $this->request->whenFilled('min_score', function ($value) {
+            $this->query->where('score', '>=', $value);
+        });
+
+        $this->request->whenFilled('indicator_type_id', function ($value) {
+            $this->query->where('indicator_type_id', $value);
+        });
+
+        $this->request->whenFilled('created_by', function ($value) {
+            $this->query->where('created_by', $value);
+        });
+
+        return $this;
+    }
+}
