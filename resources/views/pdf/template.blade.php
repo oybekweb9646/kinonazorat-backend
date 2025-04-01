@@ -78,7 +78,7 @@ $user = auth()->user();
     </div>
     <!-- Main title -->
     <h3 class="main_title">
-        @php if($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE): @endphp
+        @php if($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value): @endphp
              {{$user->region->name_uzc}} Ахборот ва оммавий коммуникациялар бошқармаси
         @php else: @endphp
             Ўзбекистон Республикаси Президенти Администрацияси ҳузуридаги Ахборот ва оммавий коммуникациялар агентлиги
