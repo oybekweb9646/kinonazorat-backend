@@ -48,7 +48,11 @@ class SoatoRegionsRepository
             ->firstOrFail();
     }
 
-    public function findById(int $id): Collection
+    /**
+     * @param int $id
+     * @return EnumSoatoRegion|null
+     */
+    public function findById(int $id): ?EnumSoatoRegion
     {
         return EnumSoatoRegion::query()
             ->where('id', $id)
