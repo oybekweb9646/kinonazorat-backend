@@ -160,6 +160,7 @@ Route::controller(RequestController::class)
         $roles = implode(',', [
             RoleEnum::_SUPER_ADMIN->value,
             RoleEnum::_RESPONSIBLE->value,
+            RoleEnum::_TERRITORIAL_RESPONSIBLE->value,
         ]);
         Route::get('request/list', 'list')
             ->name('request.list');
@@ -214,6 +215,7 @@ Route::controller(QuestionController::class)
         $roles = implode(',', [
             RoleEnum::_SUPER_ADMIN->value,
             RoleEnum::_RESPONSIBLE->value,
+            RoleEnum::_TERRITORIAL_RESPONSIBLE->value,
         ]);
         Route::post('question/create', 'create')
             ->middleware(CheckRole::class . ':' . $roles)
@@ -243,6 +245,7 @@ Route::controller(ChecklistController::class)
         $roles = implode(',', [
             RoleEnum::_SUPER_ADMIN->value,
             RoleEnum::_RESPONSIBLE->value,
+            RoleEnum::_TERRITORIAL_RESPONSIBLE->value,
         ]);
         Route::post('checklist/create', 'create')
             ->middleware(CheckRole::class . ':' . $roles)
@@ -314,6 +317,7 @@ Route::controller(AuthorityController::class)
         $roles = implode(',', [
             RoleEnum::_SUPER_ADMIN->value,
             RoleEnum::_RESPONSIBLE->value,
+            RoleEnum::_TERRITORIAL_RESPONSIBLE->value,
         ]);
         Route::post('authority/filter', 'filter')
             ->name('authority.filter');
