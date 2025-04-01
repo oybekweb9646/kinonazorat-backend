@@ -36,7 +36,7 @@ readonly class MibService
         }
         $user = auth()->user();
         $soato = $this->soatoRegionsRepository->findById($authorityInfo->billing_soato);
-        dd($soato);
+
         if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE) {
             if (!empty($soato)) {
                 if ($user->region_id != $soato->parent_id) {
