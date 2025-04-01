@@ -39,7 +39,7 @@ readonly class MibService
 
         if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE) {
             if (!empty($soato)) {
-                if ($user->getRegionId() != $soato->id || $user->getRegionId() != $soato->parent_id) {
+                if ($user->region_id != $soato->parent_id) {
                     throw new NotFoundResourceException('Ushbu tadbirkorlik subyekti sizning hududingizga tegishli emas !!!');
                 }
             } else {
