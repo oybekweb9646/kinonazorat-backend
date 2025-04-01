@@ -30,7 +30,7 @@ readonly class MibService
 
         $authorityInfo = $this->requestService->fetchAuthorityInfo($fetAccessTokenDto->access_token, $stir);
         $authority = $this->authorityRepository->findByStir($stir);
-
+        dd($authorityInfo);
         if (is_null($authority)) {
             $authority = new Authority();
         }
