@@ -52,6 +52,6 @@ class SoatoRegionsRepository
     {
         return EnumSoatoRegion::query()
             ->where('id', $id)
-            ->get();
+            ->first();
     }
 }
