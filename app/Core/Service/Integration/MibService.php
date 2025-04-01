@@ -30,13 +30,13 @@ readonly class MibService
 
         $authorityInfo = $this->requestService->fetchAuthorityInfo($fetAccessTokenDto->access_token, $stir);
         $authority = $this->authorityRepository->findByStir($stir);
-        dd($authorityInfo->billing_soato);
+
         if (is_null($authority)) {
             $authority = new Authority();
         }
         $user = auth()->user();
         $soato = $this->soatoRegionsRepository->findById($authorityInfo->billing_soato);
-
+        dd($soato);
         if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE) {
             if (!empty($soato)) {
                 if ($user->region_id != $soato->parent_id) {
