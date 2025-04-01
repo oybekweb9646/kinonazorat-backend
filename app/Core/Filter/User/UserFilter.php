@@ -3,6 +3,7 @@
 namespace App\Core\Filter\User;
 
 use App\Core\Filter\BaseFilter;
+use App\Core\Helpers\Lang\LanguageHelper;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -10,7 +11,10 @@ class UserFilter extends BaseFilter
 {
     protected function getBaseQuery(): Builder
     {
-        return User::query();
+        $name = LanguageHelper::getName();
+        return User::query()
+            ->select(['users.*',"enum_soato_regions." . $name ." AS region_name"])
+            ->leftJoin('enum_soato_regions','enum_soato_regions.id','=','users.region_id');
     }
 
     /**
@@ -38,6 +42,9 @@ class UserFilter extends BaseFilter
 
         $this->request->whenFilled('role', function ($value) {
             $this->query->where('role', $value);
+        });
+        $this->request->whenFilled('region_id', function ($value) {
+            $this->query->where('region_id', $value);
         });
 
         $this->request->whenFilled('is_juridical', function ($value) {

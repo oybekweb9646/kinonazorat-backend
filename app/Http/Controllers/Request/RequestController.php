@@ -98,7 +98,7 @@ class RequestController extends Controller
         ]);
     }
 
-    public function generatePdf(int $id)
+    public function generatePdf(int $id): StreamedResponse
     {
         $request = $this->requestRepository->getByIdWithRelations($id);
         $pdf = Pdf::loadView('pdf.template', ['request' => $request->toArray()]);

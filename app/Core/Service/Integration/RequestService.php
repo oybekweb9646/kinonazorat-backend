@@ -55,7 +55,7 @@ readonly class RequestService
 
         $this->_throwException($httpResponse);
         if (empty($httpResponse->json())) {
-            throw new NotFoundResourceException('Bunday tashkilot mavjud emas.');
+            throw new NotFoundResourceException('Bunday STIR ga ega tashkilot topilmadi!!!');
         }
 
         return new FetchAuthorityDto($httpResponse->json());

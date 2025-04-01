@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5446/aoka_database</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="AOKA_PRODUCTION" uuid="aa374aee-9758-405e-88b0-efb2f7ee7e3c">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5446/aoka_database</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Checklist\ChecklistAuthorityController;
 use App\Http\Controllers\Checklist\ChecklistController;
 use App\Http\Controllers\Enum\IndicatorController;
 use App\Http\Controllers\Enum\IndicatorTypeController;
+use App\Http\Controllers\Enum\SoatoRegionController;
 use App\Http\Controllers\File\FileManagerController;
 use App\Http\Controllers\Integration\MibIntegrationController;
 use App\Http\Controllers\Question\QuestionAuthorityController;
@@ -144,6 +145,13 @@ Route::controller(IndicatorController::class)
         Route::post('indicator/scores', 'scores')
             ->middleware(CheckRole::class . ':' . $roles)
             ->name('indicator.scores');
+    });
+
+Route::controller(SoatoRegionController::class)
+    ->middleware(['jwt.verify'])
+    ->group(function () {
+        Route::get('soato-region/list', 'list')
+            ->name('soatoRegion.list');
     });
 
 Route::controller(RequestController::class)

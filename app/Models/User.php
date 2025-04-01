@@ -7,6 +7,7 @@ use App\Core\Enums\Auth\AuthTypeEnum;
 use App\Core\Enums\User\UserStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +29,9 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property integer $authority_id
  * @property integer $status
  * @property string $date_of_birth
+ * @property integer $region_id
  * @property Authority $authority
+ * @property EnumSoatoRegion $region
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -53,7 +56,8 @@ class User extends Authenticatable implements JWTSubject
         'date_of_birth',
         'phone',
         'is_juridical',
-        'authority_id'
+        'authority_id',
+        'region_id'
     ];
 
     /**
@@ -148,6 +152,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->pin_fl;
     }
 
+    public function getRegionId(): ?int
+    {
+        return $this->region_id;
+    }
+
+    public function setRegionId(?int $regionId): void
+    {
+        $this->region_id = $regionId;
+    }
+
     public function setPinFl(?int $pin_fl): void
     {
         $this->pin_fl = $pin_fl;
@@ -223,6 +237,11 @@ class User extends Authenticatable implements JWTSubject
     public function authority(): BelongsTo
     {
         return $this->belongsTo(Authority::class, 'authority_id');
+    }
+
+    public function region(): HasMany
+    {
+        return $this->hasMany(EnumSoatoRegion::class, 'region_id');
     }
 
     /**

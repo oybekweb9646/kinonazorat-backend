@@ -60,7 +60,12 @@ class UserRequest extends FormRequest
             'authority_id' => [
                 'integer',
                 Rule::exists('authority', 'id')
-            ]
+            ],
+            'region_id' => [
+                'integer',
+                'exists:enum_soato_regions,id',
+                'nullable'
+            ],
         ];
     }
 }

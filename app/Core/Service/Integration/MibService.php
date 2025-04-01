@@ -2,17 +2,21 @@
 
 namespace App\Core\Service\Integration;
 
+use App\Core\Enums\Role\RoleEnum;
 use App\Core\Helpers\DB\Transaction;
 use App\Core\Repository\Authority\AuthorityRepository;
+use App\Core\Repository\Enum\SoatoRegionsRepository;
 use App\Models\Authority;
 use Illuminate\Http\Client\ConnectionException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 readonly class MibService
 {
     public function __construct(
-        protected Transaction         $transaction,
-        protected AuthorityRepository $authorityRepository,
-        protected RequestService      $requestService,
+        protected Transaction            $transaction,
+        protected AuthorityRepository    $authorityRepository,
+        protected RequestService         $requestService,
+        protected SoatoRegionsRepository $soatoRegionsRepository
     )
     {
     }
@@ -29,6 +33,18 @@ readonly class MibService
 
         if (is_null($authority)) {
             $authority = new Authority();
+        }
+        $user = auth()->user();
+        $soato = $this->soatoRegionsRepository->findById($authorityInfo->billing_soato);
+
+        if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE) {
+            if (!empty($soato)) {
+                if ($user->getRegionId() != $soato->id || $user->getRegionId() != $soato->parent_id) {
+                    throw new NotFoundResourceException('Ushbu tadbirkorlik subyekti sizning hududingizga tegishli emas !!!');
+                }
+            } else {
+                throw new NotFoundResourceException('Ushbu tadbirkorlik subyektining hududi belgilanmagan !!!');
+            }
         }
 
         $authority->fill([

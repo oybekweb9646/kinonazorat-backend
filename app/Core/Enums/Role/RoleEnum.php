@@ -9,6 +9,7 @@ enum RoleEnum: int
     case _READ_ONLY = 3;
 
     case _AUTHORITY = 4;
+    case _TERRITORIAL_RESPONSIBLE = 5;
 
     /**
      * @return array

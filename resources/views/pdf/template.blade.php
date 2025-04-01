@@ -1,10 +1,9 @@
 <?php
 
+use App\Core\Enums\Role\RoleEnum;
 use Carbon\Carbon;
-
+$user = auth()->user();
 ?>
-
-
     <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,13 +12,6 @@ use Carbon\Carbon;
     <title>Document</title>
     <style>
         .container {
-            /*max-width: 900px;*/
-            /*width: 100%;*/
-            /*margin: 0 auto;*/
-            /*box-sizing: border-box;*/
-            /*display: flex;*/
-            /*flex-direction: column;*/
-            /*gap: 32px;*/
         }
 
         .header_container {
@@ -72,9 +64,6 @@ use Carbon\Carbon;
 <div class="container">
     <div class="header_container">
         <img src="{{ public_path('images/img.png') }}" class="header_image" alt="Emblem of Uzbekistan">
-        {{--        <div class="header_title">--}}
-        {{--            Соғлиқни сақлаш вазирлиги ҳузуридаги Фармацевтика маҳсулотлари хавфсизлиги маркази давлат муассасаси--}}
-        {{--        </div>--}}
     </div>
     <!-- doc date -->
     <div class="doc_date_container">
@@ -89,8 +78,11 @@ use Carbon\Carbon;
     </div>
     <!-- Main title -->
     <h3 class="main_title">
-        Ўзбекистон Республикаси Соғлиқни сақлаш вазирлиги ҳузуридаги Фармацевтика маҳсулотлари хавфсизлиги маркази
-        Давлат муассасаси
+        @php if($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE): @endphp
+             {{$user->region->name_uzc}} Ахборот ва оммавий коммуникациялар бошқармаси
+        @php else: @endphp
+            Ўзбекистон Республикаси Президенти Администрацияси ҳузуридаги Ахборот ва оммавий коммуникациялар агентлиги
+        @php endif; @endphp
     </h3>
 
     <h3 class="main_title_2">
@@ -106,7 +98,7 @@ use Carbon\Carbon;
         </div>
         <div class="font_bold">Лицензия рақами -</div>
         <div class="font_bold">Лицензия берилган сана -</div>
-        <div class="font_bold">Лицензя амал қилиш муддати -</div>
+        <div class="font_bold">Лицензия амал қилиш муддати -</div>
         <div class="font_bold">Жойлашган жойи (фаолият манзили) - {{$request['authority']['billing_address']}}</div>
         <div class="font_bold">Олинган балл кўрсатгичи - {{$request['score']}}</div>
     </div>
