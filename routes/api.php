@@ -288,6 +288,7 @@ Route::controller(MibIntegrationController::class)
         $roles = implode(',', [
             RoleEnum::_SUPER_ADMIN->value,
             RoleEnum::_RESPONSIBLE->value,
+            RoleEnum::_TERRITORIAL_RESPONSIBLE->value,
         ]);
 
         Route::post('mib-integration/get', 'get')
