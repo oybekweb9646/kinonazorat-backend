@@ -2,6 +2,7 @@
 
 namespace App\Core\Filter\Request;
 
+use App\Core\Enums\Role\RoleEnum;
 use App\Core\Filter\BaseFilter;
 use App\Core\Helpers\Lang\LanguageHelper;
 use App\Models\Request;
@@ -12,12 +13,17 @@ class RequestFilter extends BaseFilter
     protected function getBaseQuery(): BuilderAlias
     {
         $name = LanguageHelper::getName();
+        $user = auth()->user();
+
         return Request::query()
             ->with([
                 'indicatorType' => function ($query) use ($name) {
                     $query->select(['id', $name . ' as name']);
                 },
-                'authority' => function ($query) use ($name) {
+                'authority' => function ($query) use ($name, $user) {
+                    if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
+
+                    }
                     $query->select(['id', $name . ' as name', '*']);
                 },
                 'createdBy'

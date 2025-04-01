@@ -239,9 +239,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Authority::class, 'authority_id');
     }
 
-    public function region(): HasMany
+    public function region(): BelongsTo
     {
-        return $this->hasMany(EnumSoatoRegion::class, 'region_id');
+        return $this->belongsTo(EnumSoatoRegion::class, 'region_id','id');
     }
 
     /**
