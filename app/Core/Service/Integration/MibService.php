@@ -38,6 +38,7 @@ readonly class MibService
         $soato = $this->soatoRegionsRepository->findById($authorityInfo->billing_soato);
 
         if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE) {
+            dd($soato->parent_id);
             if (!empty($soato)) {
                 if ($user->region_id != $soato->parent_id) {
                     throw new NotFoundResourceException('Ushbu tadbirkorlik subyekti sizning hududingizga tegishli emas !!!');
