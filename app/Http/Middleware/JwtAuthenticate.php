@@ -23,14 +23,14 @@ class JwtAuthenticate
             if (!$user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'user not found'
+                    'message' => 'User not found'
                 ], 401);
             }
 
             if ($user->status == UserStatusEnum::_BANNED) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'user banned'
+                    'message' => 'User banned'
                 ], 401);
             }
         } catch (JWTException $e) {
