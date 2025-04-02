@@ -75,6 +75,11 @@ class Authority extends Model
         return $this->belongsTo(IndicatorType::class, 'indicator_type_id');
     }
 
+    public function directorSoato(): BelongsTo
+    {
+        return $this->belongsTo(EnumSoatoRegion::class, 'director_soato');
+    }
+
     public function questions(): BelongsToMany
     {
         return $this->belongsToMany(Question::class, 'question_authority', 'authority_id', 'question_id');

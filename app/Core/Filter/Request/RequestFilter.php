@@ -16,14 +16,16 @@ class RequestFilter extends BaseFilter
         $user = auth()->user();
 
         return Request::query()
+            ->whereHas('authority.directorSoato', function ($q) use ($user) {
+                if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
+                    $q->where('parent_id', $user->region_id);
+                }
+            })
             ->with([
                 'indicatorType' => function ($query) use ($name) {
                     $query->select(['id', $name . ' as name']);
                 },
-                'authority' => function ($query) use ($name, $user) {
-                    if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
-
-                    }
+                'authority' => function ($query) use ($name) {
                     $query->select(['id', $name . ' as name', '*']);
                 },
                 'createdBy'
