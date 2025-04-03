@@ -92,9 +92,9 @@ class RequestController extends Controller
     public function stat(): JsonResponse
     {
         return Response::success('Stat', [
-            'high' => $this->requestRepository->stat(60, 0),
-            'normal' => $this->requestRepository->stat(80, 60),
-            'danger' => $this->requestRepository->stat(100, 80)
+            'high' => $this->requestRepository->stat(100, 81),
+            'normal' => $this->requestRepository->stat(80, 61),
+            'low' => $this->requestRepository->stat(60, 0),
         ]);
     }
 
