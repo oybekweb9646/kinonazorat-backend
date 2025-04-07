@@ -2,6 +2,7 @@
 
 namespace App\Core\Filter\Authority;
 
+use App\Core\Enums\Role\RoleEnum;
 use App\Core\Filter\BaseFilter;
 use App\Core\Helpers\Lang\LanguageHelper;
 use App\Models\Authority;
@@ -12,11 +13,17 @@ class AuthorityFilter extends BaseFilter
     protected function getBaseQuery(): BuilderAlias
     {
         $name = LanguageHelper::getName();
+        $user = auth()->user();
         return Authority::query()
             ->select([
                 $name . ' as name',
                 '*'
-            ]);
+            ])
+            ->whereHas('directorSoato', function ($q) use ($user) {
+                if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
+                    $q->where('parent_id', $user->region_id);
+                }
+            });
     }
 
     /**
