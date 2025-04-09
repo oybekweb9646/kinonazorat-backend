@@ -60,7 +60,12 @@ class RequestRepository
                         'indicator' => function ($query) use ($name) {
                             $query->select(['id', $name . ' as name']);
                         },
-                        'file'
+                        'file' => function ($query) {
+                            $query->select(['id', "orginal_name AS name","path"]);
+                        },
+                        'updatedBy' => function ($query) {
+                            $query->select(['id', 'username']);
+                        },
                     ]);
                 },
                 'authority' => function ($query) use ($name) {

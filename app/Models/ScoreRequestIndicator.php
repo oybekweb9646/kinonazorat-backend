@@ -16,9 +16,11 @@ use Illuminate\Notifications\Notifiable;
  * @property int $score
  * @property int $max_score
  * @property int $file_id
+ * @property int $created_by
+ * @property int $updated_by
  * @property string $file_name
  */
-class ScoreRequestIndicator extends Model
+class ScoreRequestIndicator extends BaseModel
 {
     use HasFactory, Notifiable;
 
@@ -66,5 +68,14 @@ class ScoreRequestIndicator extends Model
     public function setFile(int $fileId): void
     {
         $this->file_id = $fileId;
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'created_by');
+    }
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'updated_by');
     }
 }
