@@ -60,7 +60,7 @@ class ScoreRequestIndicator extends Model
 
     public function removePoint(): void
     {
-        $this->score = null;
+        $this->score = 0;
     }
 
     public function setFile(int $fileId): void
