@@ -4,8 +4,10 @@ namespace App\Core\Service\Integration;
 
 use App\Core\Enums\Role\RoleEnum;
 use App\Core\Helpers\DB\Transaction;
+use App\Core\Helpers\Lang\LanguageHelper;
 use App\Core\Repository\Authority\AuthorityRepository;
 use App\Core\Repository\Enum\SoatoRegionsRepository;
+use App\Core\Repository\Request\RequestRepository;
 use App\Models\Authority;
 use Illuminate\Http\Client\ConnectionException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
@@ -16,7 +18,8 @@ readonly class MibService
         protected Transaction            $transaction,
         protected AuthorityRepository    $authorityRepository,
         protected RequestService         $requestService,
-        protected SoatoRegionsRepository $soatoRegionsRepository
+        protected SoatoRegionsRepository $soatoRegionsRepository,
+        protected RequestRepository      $requestRepository,
     )
     {
     }
@@ -34,6 +37,7 @@ readonly class MibService
         if (is_null($authority)) {
             $authority = new Authority();
         }
+
         $user = auth()->user();
         $soato = $this->soatoRegionsRepository->findById($authorityInfo->director_soato);
 
@@ -72,7 +76,14 @@ readonly class MibService
         $this->transaction->wrap(function () use ($authority) {
             $authority->save();
         });
+        $request = $this->requestRepository->findNoConfirmed($authority->id);
 
-        return $authority;
+        return [
+            'id' => $authority->id,
+            'stir' => $authority->stir,
+            'name' => $authority->{LanguageHelper::getName()},
+            'indicator_type_id' => $request ? $request->indicator_type_id : null,
+            'request_id' => $request ? $request->id : null,
+        ];
     }
 }

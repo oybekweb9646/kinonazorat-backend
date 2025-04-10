@@ -2,6 +2,7 @@
 
 namespace App\Core\Repository\Request;
 
+use App\Core\Enums\Request\State;
 use App\Core\Helpers\Lang\LanguageHelper;
 use App\Models\Request;
 use Illuminate\Database\Eloquent\Collection;
@@ -82,4 +83,13 @@ class RequestRepository
             ->where('score', '<=', $max)
             ->count();
     }
+
+    public function findNoConfirmed(int $authorityId)
+    {
+        return Request::query()
+            ->where('authority_id', $authorityId)
+            ->where('status', '<',State::CONFIRMED->value)
+            ->first();
+    }
+
 }
