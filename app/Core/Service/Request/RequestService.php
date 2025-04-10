@@ -31,12 +31,15 @@ class RequestService
 
     public function create(RequestRequest $request): Request
     {
-        $requestModel = new Request();
-
-        $requestModel->fill($request->all());
-        $authority = $this->authorityRepository->getById($requestModel->authority_id);
-        $requestModel->stir = $authority->stir;
-        $requestModel->created_by = auth()->user()->id;
+        if (!empty($requestModel = $this->requestRepository->findNoConfirmed($request->authority_id, $request->indicator_type_id))) {
+            return $requestModel;
+        } else {
+            $requestModel = new Request();
+            $requestModel->fill($request->all());
+            $authority = $this->authorityRepository->getById($requestModel->authority_id);
+            $requestModel->stir = $authority->stir;
+            $requestModel->created_by = auth()->user()->id;
+        }
         $indicators = $this->indicatorRepository->getByIndicatorTypeId($request->indicator_type_id);
 
         $this->transaction->wrap(function () use ($requestModel, $indicators, $request) {

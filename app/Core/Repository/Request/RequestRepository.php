@@ -62,7 +62,7 @@ class RequestRepository
                             $query->select(['id', $name . ' as name']);
                         },
                         'file' => function ($query) {
-                            $query->select(['id', "orginal_name AS name","path"]);
+                            $query->select(['id', "original_name AS name","path"]);
                         },
                         'updatedBy' => function ($query) {
                             $query->select(['id', 'username']);
@@ -84,10 +84,11 @@ class RequestRepository
             ->count();
     }
 
-    public function findNoConfirmed(int $authorityId)
+    public function findNoConfirmed(int $authorityId,int $indicatorTypeId)
     {
         return Request::query()
             ->where('authority_id', $authorityId)
+            ->where('indicator_type_id', $indicatorTypeId)
             ->where('status', '<',State::CONFIRMED->value)
             ->first();
     }
