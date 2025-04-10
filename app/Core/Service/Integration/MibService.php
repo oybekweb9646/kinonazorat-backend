@@ -76,6 +76,7 @@ readonly class MibService
         $this->transaction->wrap(function () use ($authority) {
             $authority->save();
         });
+
         $request = $this->requestRepository->findNoConfirmed($authority->id);
 
         return [
