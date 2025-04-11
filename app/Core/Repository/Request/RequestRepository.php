@@ -84,11 +84,13 @@ class RequestRepository
             ->count();
     }
 
-    public function findNoConfirmed(int $authorityId,int $indicatorTypeId)
+    public function findNoConfirmed(int $authorityId,?int $indicatorTypeId = null)
     {
         return Request::query()
             ->where('authority_id', $authorityId)
-            ->where('indicator_type_id', $indicatorTypeId)
+            ->when($indicatorTypeId, function ($query) use ($indicatorTypeId) {
+                return $query->where('indicator_type_id', $indicatorTypeId);
+            })
             ->where('status', '<',State::CONFIRMED->value)
             ->first();
     }
