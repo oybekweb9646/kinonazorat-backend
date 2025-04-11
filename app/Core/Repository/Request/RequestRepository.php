@@ -42,7 +42,7 @@ class RequestRepository
                     $query->select(['id', $name . ' as name']);
                 },
                 'authority' => function ($query) use ($name) {
-                    $query->select(['id', $name . ' as name','*']);
+                    $query->select(['id', $name . ' as name', '*']);
                 },
                 'createdBy'
             ])
@@ -62,7 +62,7 @@ class RequestRepository
                             $query->select(['id', $name . ' as name']);
                         },
                         'file' => function ($query) {
-                            $query->select(['id', "original_name AS name","path"]);
+                            $query->select(['id', "original_name AS name", "path"]);
                         },
                         'updatedBy' => function ($query) {
                             $query->select(['id', 'username']);
@@ -84,15 +84,17 @@ class RequestRepository
             ->count();
     }
 
-    public function findNoConfirmed(int $authorityId,?int $indicatorTypeId = null)
+    public function findNoConfirmed(int $authorityId, ?int $indicatorTypeId = null)
     {
-        return Request::query()
+        $query = Request::query()
             ->where('authority_id', $authorityId)
-            ->when($indicatorTypeId, function ($query) use ($indicatorTypeId) {
-                return $query->where('indicator_type_id', $indicatorTypeId);
-            })
-            ->where('status', '<',State::CONFIRMED->value)
-            ->first();
+            ->where('status', '<', State::CONFIRMED->value);
+
+        $query->when($indicatorTypeId, function ($query) use ($indicatorTypeId) {
+            return $query->where('indicator_type_id', $indicatorTypeId);
+        });
+
+        return $query->first();
     }
 
 }
