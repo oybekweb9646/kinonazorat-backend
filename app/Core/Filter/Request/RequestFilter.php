@@ -59,6 +59,10 @@ class RequestFilter extends BaseFilter
             $this->query->where('indicator_type_id', $value);
         });
 
+        $this->request->whenFilled('authority_id', function ($value) {
+            $this->query->where('authority_id', $value);
+        });
+
         $this->request->whenFilled('created_by', function ($value) {
             $this->query->where('created_by', $value);
         });
