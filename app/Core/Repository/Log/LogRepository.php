@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class LogRepository
 {
-    public function findAllByRequest($id): Collection
+    public function findAllByRequest($id)
     {
         $name = LanguageHelper::getName();
         return Log::query()
@@ -23,6 +23,6 @@ class LogRepository
                     ]);
                 }
             ])
-            ->get();
+            ->orderBy('id', 'desc');
     }
 }

@@ -112,8 +112,8 @@ class RequestController extends Controller
         );
     }
 
-    public function log(int $id): JsonResponse
+    public function log(int $id)
     {
-        return Response::success('Log', $this->logRepository->findAllByRequest($id)->toArray());
+        return  response()->json($this->logRepository->findAllByRequest($id)->paginate());
     }
 }
