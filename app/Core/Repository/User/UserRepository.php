@@ -173,4 +173,11 @@ class UserRepository
             ->where('stir', $stir)
             ->first();
     }
+
+    public function getReturnName(int $id): mixed
+    {
+        return User::query()
+            ->where('id', $id)
+            ->firstOrFail()->username;
+    }
 }

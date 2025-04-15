@@ -3,6 +3,7 @@
 namespace App\Core\Service\Log;
 
 use App\Core\Helpers\Lang\LanguageHelper;
+use App\Core\Repository\User\UserRepository;
 use App\Models\File;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,6 +31,7 @@ abstract class LogService
     public function getChanges(Model $record, array $attributes): array
     {
         $data = [];
+        $userRepo = app(UserRepository::class);
         $excludes = self::excludes();
         foreach ($attributes as $name => $value) {
             if (in_array($name, $excludes)) continue;
@@ -43,6 +45,14 @@ abstract class LogService
                         'old' => $value,
                         'new_label' => $current ? File::query()->where(['id' => $current])->first()->{LanguageHelper::getFileName()}  : null,
                         'new' => $current
+                    ],
+                    'created_by' => [
+                        'old' => $value,
+                        'new' => $current ? $userRepo->getReturnName($current) : null
+                    ],
+                    'updated_by' => [
+                        'old' => $value ? $userRepo->getReturnName($value) : null,
+                        'new' => $current ? $userRepo->getReturnName($current) : null
                     ],
                     default => [
                         'old' => $value,
