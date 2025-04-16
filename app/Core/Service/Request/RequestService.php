@@ -119,7 +119,7 @@ class RequestService
             $scoreIndicatorRequest->removePoint();
         }
 
-        $requestModel->status = State::PARTLY_SCORED;
+//        $requestModel->status = State::PARTLY_SCORED;
         $this->transaction->wrap(function () use ($scoreIndicatorRequest, $requestModel, $attributes) {
             $scoreIndicatorRequest->save();
             $requestModel->save();
