@@ -80,7 +80,7 @@ class Request extends Model
 
     public function scoreRequestIndicators(): HasMany
     {
-        return $this->hasMany(ScoreRequestIndicator::class, 'request_id');
+        return $this->hasMany(ScoreRequestIndicator::class, 'request_id')->orderBy('indicator_id');
     }
 
     public function setStir(): void
