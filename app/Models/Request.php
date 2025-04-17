@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
@@ -23,12 +22,12 @@ use Illuminate\Support\Carbon;
  * @property int $indicator_type_id
  * @property int $score
  * @property int $created_by
+ * @property int $updated_by
  * @property string $registered_date
  * @property string $closed_at
  * @property string $request_no
- * @mixin \Eloquent
  */
-class Request extends Model
+class Request extends BaseModel
 {
     protected static function boot(): void
     {
@@ -55,6 +54,7 @@ class Request extends Model
         'status',
         'stir',
         'created_by',
+        'updated_by',
         'year',
         'quarter',
         'month',
@@ -66,6 +66,10 @@ class Request extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     public function indicatorType(): BelongsTo

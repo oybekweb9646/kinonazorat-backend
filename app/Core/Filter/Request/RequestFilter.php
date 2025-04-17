@@ -28,7 +28,8 @@ class RequestFilter extends BaseFilter
                 'authority' => function ($query) use ($name) {
                     $query->select(['id', $name . ' as name', '*']);
                 },
-                'createdBy'
+                'createdBy',
+                'updatedBy',
             ]);
     }
 
