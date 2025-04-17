@@ -36,7 +36,7 @@ class FileManagerService implements FileManager
             return new FileInfoDto($fileInfo->id, $fileInfo->original_name, true);
         }
         if (!Storage::put($this->path, $file)) {
-            throw new \DomainException("File don't upload");
+            throw new \DomainException($file->getErrorMessage());
         }
 
         return new FileDto(
