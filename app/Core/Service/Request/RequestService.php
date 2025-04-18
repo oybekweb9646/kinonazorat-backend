@@ -42,6 +42,7 @@ class RequestService
         }
         $indicators = $this->indicatorRepository->getByIndicatorTypeId($request->indicator_type_id);
 
+
         $this->transaction->wrap(function () use ($requestModel, $indicators, $request) {
             $requestModel->save();
 
