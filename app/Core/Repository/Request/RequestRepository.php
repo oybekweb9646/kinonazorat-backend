@@ -86,6 +86,7 @@ class RequestRepository
 
     public function findNoConfirmed(int $authorityId, ?int $indicatorTypeId = null)
     {
+
         $query = Request::query()
             ->where('authority_id', $authorityId)
             ->where('status', '<', State::CONFIRMED->value);
