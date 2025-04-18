@@ -31,7 +31,6 @@ class RequestService
 
     public function create(RequestRequest $request): Request
     {
-
         if (!empty($requestModel = $this->requestRepository->findNoConfirmed($request->authority_id, $request->indicator_type_id))) {
             return $requestModel;
         } else {
