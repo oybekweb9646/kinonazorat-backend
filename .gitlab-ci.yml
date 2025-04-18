@@ -8,7 +8,7 @@ stages:
 deploy-prod:
   stage: deploy_prod
   script:
-    - rsync -av --itemize-changes --no-perms --no-owner --no-group --filter=':- .gitignore' --delete-after $CI_PROJECT_DIR/ /var/www/prod/aoka-back
+    - rsync -av --itemize-changes --no-perms --no-owner --no-group --filter=':- .gitignore' -exclude='storage' --delete-after $CI_PROJECT_DIR/ /var/www/prod/aoka-back
     - docker exec aoka_php_cli  composer install
     - echo "Application successfully deployed on prod server"
   rules:
