@@ -38,7 +38,6 @@ class RequestService
             $requestModel->fill($request->all());
             $authority = $this->authorityRepository->getById($requestModel->authority_id);
             $requestModel->stir = $authority->stir;
-            $requestModel->created_by = auth()->user()->id;
         }
         $indicators = $this->indicatorRepository->getByIndicatorTypeId($request->indicator_type_id);
 
