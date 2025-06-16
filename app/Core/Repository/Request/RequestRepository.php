@@ -61,8 +61,12 @@ class RequestRepository
                         'indicator' => function ($query) use ($name) {
                             $query->select(['id', $name . ' as name']);
                         },
-                        'file' => function ($query) {
-                            $query->select(['id', "original_name AS name", "path"]);
+                        'linkScoreIndicatorFiles' => function ($query) {
+                            $query->with([
+                                'file' => function ($query) {
+                                    return $query->select(['id', "original_name AS name", "path"]);
+                                }
+                            ]);
                         },
                         'updatedBy' => function ($query) {
                             $query->select(['id', 'username']);

@@ -6,24 +6,27 @@ use App\Core\Enums\Request\State;
 use App\Core\Helpers\DB\Transaction;
 use App\Core\Repository\Authority\AuthorityRepository;
 use App\Core\Repository\Enum\IndicatorRepository;
+use App\Core\Repository\link\LinkScoreIndicatorFilesRepository;
 use App\Core\Repository\Request\RequestRepository;
 use App\Core\Repository\Request\ScoreRequestIndicatorRepository;
 use App\Core\Service\Log\Request\RequestLogService;
 use App\Core\Service\Log\ScoreRequestIndicator\ScoreRequestIndicatorLogService;
 use App\Http\Requests\Request\RequestRequest;
+use App\Models\LinkScoreRequestIndicatorFiles;
 use App\Models\Request;
 use App\Models\ScoreRequestIndicator;
 
 class RequestService
 {
     public function __construct(
-        public Transaction                     $transaction,
-        public IndicatorRepository             $indicatorRepository,
-        public RequestRepository               $requestRepository,
-        public ScoreRequestIndicatorRepository $scoreRequestIndicatorRepository,
-        public AuthorityRepository             $authorityRepository,
-        public RequestLogService               $requestLogService,
-        public ScoreRequestIndicatorLogService $scoreRequestIndicatorLogService,
+        public Transaction                       $transaction,
+        public IndicatorRepository               $indicatorRepository,
+        public RequestRepository                 $requestRepository,
+        public ScoreRequestIndicatorRepository   $scoreRequestIndicatorRepository,
+        public AuthorityRepository               $authorityRepository,
+        public RequestLogService                 $requestLogService,
+        public ScoreRequestIndicatorLogService   $scoreRequestIndicatorLogService,
+        public LinkScoreIndicatorFilesRepository $linkFileRepository,
 
     )
     {
@@ -164,16 +167,19 @@ class RequestService
     public function setFile($request, int $id): ScoreRequestIndicator
     {
         $scoreIndicatorRequest = $this->scoreRequestIndicatorRepository->getById($id);
-        $attributes = $scoreIndicatorRequest->getAttributes();
 
-        if ($request->file_id) {
-            $scoreIndicatorRequest->setFile($request->file_id);
-        }
+        $this->transaction->wrap(function () use ($request, $scoreIndicatorRequest) {
 
-        $this->transaction->wrap(function () use ($scoreIndicatorRequest, $attributes) {
-            $scoreIndicatorRequest->save();
+            if ($request->file_id) {
+                $link = LinkScoreRequestIndicatorFiles::create([
+                    'score_request_indicator_id' => $scoreIndicatorRequest->id,
+                    'file_id' => $request->file_id,
+                ]);
+            }
 
-            $this->scoreRequestIndicatorLogService->setFile($scoreIndicatorRequest, $attributes);
+            if (!empty($link)) {
+                $this->scoreRequestIndicatorLogService->setLinkFile($link, $link->getAttributes());
+            }
         });
 
         return $scoreIndicatorRequest;

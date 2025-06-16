@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -77,5 +79,9 @@ class ScoreRequestIndicator extends BaseModel
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class,'updated_by');
+    }
+    public function linkScoreIndicatorFiles(): HasMany
+    {
+        return $this->hasMany(LinkScoreRequestIndicatorFiles::class, 'score_request_indicator_id','id');
     }
 }
