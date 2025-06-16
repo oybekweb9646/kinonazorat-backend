@@ -90,18 +90,16 @@ abstract class LogService
                 $oldValue = null;
             }
 
-            $data[$name] = match ($name) {
-                'file_id' => [
-                    'old_label' => $oldLabel,
-                    'old' => $oldValue,
-                    'new_label' => $current ? File::query()->where(['id' => $current])->first()->original_name : null,
-                    'new' => $current
-                ],
-                default => [
-                    'old' => $value,
-                    'new' => $current
-                ],
-            };
+            if ($name == 'file_id') {
+                $data[$name] = match ($name) {
+                    'file_id' => [
+                        'old_label' => $oldLabel,
+                        'old' => $oldValue,
+                        'new_label' => $current ? File::query()->where(['id' => $current])->first()->original_name : null,
+                        'new' => $current
+                    ],
+                };
+            }
 
         }
 
