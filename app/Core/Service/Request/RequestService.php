@@ -180,6 +180,7 @@ class RequestService
             if (!empty($link)) {
                 $this->scoreRequestIndicatorLogService->setLinkFile($link, $link->getAttributes());
             }
+
         });
 
         return $scoreIndicatorRequest;
