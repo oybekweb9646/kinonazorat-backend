@@ -4,10 +4,11 @@ namespace App\Core\Enums\Request;
 
 enum State: int
 {
-    case CREATED = 1;
-    case PARTLY_SCORED = 2;
-    case SCORED = 3;
-    case CONFIRMED = 4;
+    case CREATED = 1; // yaratilgan
+    case PARTLY_SCORED = 2; // qisman baholangan
+    case SCORED = 3; // yakunlash tugmasi bosilgan
+    case SEND_FOR_INSECTION = 4; // tekshiruvga yuborilgan
+    case ARCHIVED = 10; // arxivga tushgan
 
     /**
      * @return array

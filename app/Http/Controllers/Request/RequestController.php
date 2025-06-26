@@ -7,6 +7,8 @@ use App\Core\Helpers\Responses\Response;
 use App\Core\Repository\Log\LogRepository;
 use App\Core\Repository\Request\RequestRepository;
 use App\Core\Service\Request\RequestService;
+use App\Http\Requests\Request\ActRequest;
+use App\Http\Requests\Request\OrderRequest;
 use App\Http\Requests\Request\RequestRequest;
 use App\Http\Requests\Request\ScoreIndicatorRequestPoint;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -82,13 +84,6 @@ class RequestController extends Controller
         return Response::success('Request scored', $conclusion->toArray());
     }
 
-    public function confirm(int $id): JsonResponse
-    {
-        $conclusion = $this->requestService->confirm($id);
-
-        return Response::success('Request confirmed', $conclusion->toArray());
-    }
-
     public function stat(): JsonResponse
     {
         return Response::success('Stat', [
@@ -115,5 +110,19 @@ class RequestController extends Controller
     public function log(int $id)
     {
         return  response()->json($this->logRepository->findAllByRequest($id)->paginate());
+    }
+
+    public function createOrder(OrderRequest $orderRequest,int $id): JsonResponse
+    {
+        $requestModel = $this->requestService->createOrder($orderRequest,$id);
+
+        return Response::success('Order created', $requestModel->toArray());
+    }
+
+    public function requestArchive(ActRequest $actRequest,int $id): JsonResponse
+    {
+        $requestModel = $this->requestService->requestArchive($actRequest,$id);
+
+        return Response::success('Order created', $requestModel->toArray());
     }
 }

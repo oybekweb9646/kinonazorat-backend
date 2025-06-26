@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Core\Enums\Auth\AuthTypeEnum;
 use App\Core\Enums\User\UserStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -31,7 +29,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property string $date_of_birth
  * @property integer $region_id
  * @property Authority $authority
- * @property EnumSoatoRegion $region
+ * @property Organization $organization
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -57,7 +55,7 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'is_juridical',
         'authority_id',
-        'region_id'
+        'organization_id'
     ];
 
     /**
@@ -239,9 +237,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Authority::class, 'authority_id');
     }
 
-    public function region(): BelongsTo
+    public function organization(): BelongsTo
     {
-        return $this->belongsTo(EnumSoatoRegion::class, 'region_id','id');
+        return $this->belongsTo(Organization::class, 'organization_id','id');
     }
 
     /**

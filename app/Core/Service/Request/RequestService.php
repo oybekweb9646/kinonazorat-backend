@@ -11,6 +11,8 @@ use App\Core\Repository\Request\RequestRepository;
 use App\Core\Repository\Request\ScoreRequestIndicatorRepository;
 use App\Core\Service\Log\Request\RequestLogService;
 use App\Core\Service\Log\ScoreRequestIndicator\ScoreRequestIndicatorLogService;
+use App\Http\Requests\Request\ActRequest;
+use App\Http\Requests\Request\OrderRequest;
 use App\Http\Requests\Request\RequestRequest;
 use App\Models\LinkScoreRequestIndicatorFiles;
 use App\Models\Request;
@@ -151,19 +153,6 @@ class RequestService
         return $requestModel;
     }
 
-    public function confirm(int $id): Request
-    {
-        $requestModel = $this->requestRepository->getById($id);
-        $requestModel->status = State::CONFIRMED;
-        $requestModel->closed_at = now();
-
-        $this->transaction->wrap(function () use ($requestModel) {
-            $requestModel->save();
-        });
-
-        return $requestModel;
-    }
-
     public function setFile($request, int $id): ScoreRequestIndicator
     {
         $scoreIndicatorRequest = $this->scoreRequestIndicatorRepository->getById($id);
@@ -185,4 +174,36 @@ class RequestService
 
         return $scoreIndicatorRequest;
     }
+
+    public function createOrder(OrderRequest $orderRequest, $id): Request
+    {
+        $requestModel = $this->requestRepository->getById($id);
+        $this->transaction->wrap(function () use ($requestModel, $orderRequest) {
+
+            $requestModel->fill($orderRequest->all());
+            $requestModel->status = State::SEND_FOR_INSECTION->value; // Tekshiruvga yuborilgan
+            $requestModel->save();
+
+            // Ombudsman uchun post
+        });
+        return $requestModel;
+    }
+
+    public function requestArchive(ActRequest $actRequest, int $id): Request
+    {
+        $requestModel = $this->requestRepository->getById($id);
+
+        $this->transaction->wrap(function () use ($requestModel,$actRequest) {
+
+            $requestModel->fill($actRequest->all());
+            $requestModel->status = State::ARCHIVED->value; // Arxivga tushgan
+            $requestModel->save();
+
+            // Ombudsman uchun post
+
+
+        });
+        return $requestModel;
+    }
+
 }

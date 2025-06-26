@@ -16,6 +16,7 @@ use App\Core\Service\Auth\OneIdService;
 use App\Core\Service\Auth\UzbService;
 use App\Core\Service\File\FileManagerService;
 use App\Core\Service\File\interfaces\FileManager;
+use App\Core\Service\Integration\OmbudsmanRequestService;
 use App\Core\Service\Integration\RequestService;
 use App\Core\Service\Jwt\JwtService;
 use Illuminate\Http\Request;
@@ -60,6 +61,16 @@ class AppServiceProvider extends ServiceProvider
                 config('mib.secret')
             );
         });
+
+        $this->app->bind(OmbudsmanRequestService::class, function () {
+            return new OmbudsmanRequestService(
+                config('ombudsman.token_url'),
+                config('ombudsman.service_url'),
+                config('ombudsman.username'),
+                config('ombudsman.password'),
+            );
+        });
+
         $this->app->when(JwtService::class)
             ->needs('$tokenExtraParams')
             ->give(config('jwt.cabinet_api'));

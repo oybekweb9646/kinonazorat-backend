@@ -13,8 +13,8 @@ class UserFilter extends BaseFilter
     {
         $name = LanguageHelper::getName();
         return User::query()
-            ->select(['users.*',"enum_soato_regions." . $name ." AS region_name"])
-            ->leftJoin('enum_soato_regions','enum_soato_regions.id','=','users.region_id');
+            ->select(['users.*',"organizations." . $name ." AS organization_name"])
+            ->leftJoin('organizations','organizations.id','=','users.organization_id');
     }
 
     /**
@@ -43,8 +43,8 @@ class UserFilter extends BaseFilter
         $this->request->whenFilled('role', function ($value) {
             $this->query->where('role', $value);
         });
-        $this->request->whenFilled('region_id', function ($value) {
-            $this->query->where('region_id', $value);
+        $this->request->whenFilled('organization_id', function ($value) {
+            $this->query->where('organization_id', $value);
         });
 
         $this->request->whenFilled('is_juridical', function ($value) {

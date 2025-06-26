@@ -26,6 +26,13 @@ use Illuminate\Support\Carbon;
  * @property string $registered_date
  * @property string $closed_at
  * @property string $request_no
+ * @property string $order_number
+ * @property string $order_inspector
+ * @property string $order_date
+ * @property integer $order_file_id
+ * @property integer $act_file_id
+ * @property string $act_number
+ * @property string $act_date
  */
 class Request extends BaseModel
 {
@@ -41,6 +48,11 @@ class Request extends BaseModel
     }
 
     use HasFactory, Notifiable;
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -60,13 +72,15 @@ class Request extends BaseModel
         'month',
         'registered_date',
         'score',
-        'indicator_type_id'
+        'indicator_type_id',
+        'order_number',
+        'act_number',
+        'order_date',
+        'order_inspector',
+        'act_date',
+        'order_file_id',
+        'act_file_id',
     ];
-
-    public function createdBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
@@ -90,5 +104,13 @@ class Request extends BaseModel
     public function setStir(): void
     {
         $this->stir = $this->authority()->stir;
+    }
+    public function orderFile(): BelongsTo
+    {
+        return $this->belongsTo(File::class, 'order_file_id');
+    }
+    public function actFile(): BelongsTo
+    {
+        return $this->belongsTo(File::class, 'act_file_id');
     }
 }

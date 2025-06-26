@@ -18,7 +18,7 @@ class RequestFilter extends BaseFilter
         return Request::query()
             ->whereHas('authority.directorSoato', function ($q) use ($user) {
                 if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
-                    $q->where('parent_id', $user->region_id);
+                    $q->where('parent_id', $user->organization?->region_id);
                 }
             })
             ->with([

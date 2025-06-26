@@ -7,6 +7,7 @@ use App\Http\Controllers\Checklist\ChecklistAuthorityController;
 use App\Http\Controllers\Checklist\ChecklistController;
 use App\Http\Controllers\Enum\IndicatorController;
 use App\Http\Controllers\Enum\IndicatorTypeController;
+use App\Http\Controllers\Enum\OrganizationController;
 use App\Http\Controllers\Enum\SoatoRegionController;
 use App\Http\Controllers\File\FileManagerController;
 use App\Http\Controllers\Integration\MibIntegrationController;
@@ -147,6 +148,35 @@ Route::controller(IndicatorController::class)
             ->name('indicator.scores');
     });
 
+Route::controller(OrganizationController::class)
+    ->middleware(['jwt.verify'])
+    ->group(function () {
+        $roles = implode(',', [
+            RoleEnum::_SUPER_ADMIN->value,
+            RoleEnum::_RESPONSIBLE->value,
+        ]);
+        Route::get('organization/list', 'list')
+            ->name('organization.list');
+
+        Route::post('organization/filter', 'filter')
+            ->name('organization.filter');
+
+        Route::get('organization/get/{id}', 'get')
+            ->name('organization.get');
+
+        Route::post('organization/create', 'create')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('organization.create');
+
+        Route::post('organization/update/{id}', 'update')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('organization.update');
+
+        Route::get('organization/delete/{id}', 'delete')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('organization.delete');
+    });
+
 Route::controller(SoatoRegionController::class)
     ->middleware(['jwt.verify'])
     ->group(function () {
@@ -191,10 +221,6 @@ Route::controller(RequestController::class)
             ->middleware(CheckRole::class . ':' . $roles)
             ->name('request.setFile');
 
-        Route::post('request/confirm/{id}', 'confirm')
-            ->middleware(CheckRole::class . ':' . $roles)
-            ->name('request.confirm');
-
         Route::get('request/scored/{id}', 'scored')
             ->middleware(CheckRole::class . ':' . $roles)
             ->name('request.scored');
@@ -207,6 +233,14 @@ Route::controller(RequestController::class)
 
         Route::get('request/log/{id}', 'log')
             ->name('request.log');
+
+        Route::post('request/create-order/{id}', 'createOrder')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('request.createOrder');
+
+        Route::post('request/request-archive/{id}', 'requestArchive')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('request.requestArchive');
     });
 
 Route::controller(QuestionController::class)

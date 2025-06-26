@@ -79,7 +79,7 @@ $user = auth()->user();
     <!-- Main title -->
     <h3 class="main_title">
         @php if($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value): @endphp
-             {{$user->region->name_uzc}} Ахборот ва оммавий коммуникациялар бошқармаси
+             {{$user->organization?->name_uzc}} Ахборот ва оммавий коммуникациялар бошқармаси
         @php else: @endphp
             Ўзбекистон Республикаси Президенти Администрацияси ҳузуридаги Ахборот ва оммавий коммуникациялар агентлиги
         @php endif; @endphp

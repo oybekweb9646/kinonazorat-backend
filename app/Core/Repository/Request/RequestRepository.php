@@ -92,7 +92,7 @@ class RequestRepository
     {
         $query = Request::query()
             ->where('authority_id', $authorityId)
-            ->where('status', '<', State::CONFIRMED->value);
+            ->where('status', '<', State::SEND_FOR_INSECTION->value);
 
         $query->when($indicatorTypeId, function ($query) use ($indicatorTypeId) {
             return $query->where('indicator_type_id', $indicatorTypeId);
