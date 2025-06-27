@@ -46,7 +46,7 @@ readonly class OmbudsmanRequestService
      */
     public function sendRiskAnalysisResult(string $accessToken, array $payload): FetchRiskAnalysisResultDto
     {
-        $httpResponse = Http::asJson()::withToken($accessToken)
+        $httpResponse = Http::asJson()->withToken($accessToken)
             ->post($this->serviceUrl, $payload);
 
         $this->_throwException($httpResponse);
