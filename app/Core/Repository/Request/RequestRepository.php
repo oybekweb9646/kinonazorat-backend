@@ -76,6 +76,12 @@ class RequestRepository
                 },
                 'authority' => function ($query) use ($name) {
                     $query->select(['id', $name . ' as name', '*']);
+                },
+                'orderFile' => function ($query) {
+                     $query->select(["id AS order_file_id", "original_name AS order_file_name", "order_file_path"]);
+                },
+                'actFile' => function ($query) {
+                     $query->select(["id AS act_file_id", "original_name AS act_file_name", "act_file_path"]);
                 }
             ])
             ->firstOrFail();
