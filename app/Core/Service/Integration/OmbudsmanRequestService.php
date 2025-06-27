@@ -28,9 +28,6 @@ readonly class OmbudsmanRequestService
     public function fetchAccessToken(): FetchAccessTokenOmbudsmanDto
     {
         $httpResponse = Http::asForm()
-            ->withHeaders([
-                'Content-Type' => 'application/json-patch+json',
-            ])
             ->post($this->tokenUrl, $this->getFormParamsForAccessToken());
 
         $this->_throwException($httpResponse);
