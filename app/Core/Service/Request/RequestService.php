@@ -18,6 +18,7 @@ use App\Http\Requests\Request\RequestRequest;
 use App\Models\LinkScoreRequestIndicatorFiles;
 use App\Models\Request;
 use App\Models\ScoreRequestIndicator;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 
@@ -214,6 +215,7 @@ class RequestService
 
                 $requestModel->fill($actRequest->all());
                 $requestModel->status = State::ARCHIVED->value; // Arxivga tushgan
+                $requestModel->closed_at =  now()->format('Y-m-d H:i:s');
                 $requestModel->save();
             } else {
                 throw new AccessDeniedException('Tekshirish uchun yuborilmagan tashkilotni arxivga olib bo\'lmaydi!');
