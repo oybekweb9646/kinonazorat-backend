@@ -80,7 +80,7 @@ readonly class OmbudsmanRequestService
     public function getFormParamsForAccessToken(): array
     {
         return [
-            'username' => $this->username,
+            'userName' => $this->username,
             'password' => $this->password
         ];
     }
