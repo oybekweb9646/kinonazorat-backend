@@ -49,7 +49,7 @@ class RequestFilter extends BaseFilter
         });
 
         $this->request->whenFilled('status', function ($value) {
-            $this->query->where('status', $value);
+            $this->query->whereIn('status', $value);
         });
 
         $this->request->whenFilled('min_score', function ($value) {
