@@ -18,6 +18,7 @@ use App\Http\Requests\Request\RequestRequest;
 use App\Models\LinkScoreRequestIndicatorFiles;
 use App\Models\Request;
 use App\Models\ScoreRequestIndicator;
+use Illuminate\Support\Str;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 
 class RequestService
@@ -58,6 +59,7 @@ class RequestService
                 $scoreIndicatorRequest->request_id = $requestModel->id;
                 $scoreIndicatorRequest->indicator_id = $indicator->id;
                 $scoreIndicatorRequest->max_score = $indicator->max_score;
+                $scoreIndicatorRequest->externalId = Str::uuid()->toString();
                 $scoreIndicatorRequest->save();
             }
 
@@ -89,6 +91,7 @@ class RequestService
                 $scoreIndicatorRequest->request_id = $id;
                 $scoreIndicatorRequest->indicator_id = $indicator->id;
                 $scoreIndicatorRequest->max_score = $indicator->max_score;
+                $scoreIndicatorRequest->externalId = Str::uuid()->toString();
                 $scoreIndicatorRequest->save();
 
             }

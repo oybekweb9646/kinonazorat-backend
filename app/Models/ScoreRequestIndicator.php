@@ -21,6 +21,7 @@ use Illuminate\Notifications\Notifiable;
  * @property int $created_by
  * @property int $updated_by
  * @property string $file_name
+ * @property string $externalId
  */
 class ScoreRequestIndicator extends BaseModel
 {
@@ -40,6 +41,7 @@ class ScoreRequestIndicator extends BaseModel
         'max_score',
         'file_id',
         'file_name',
+        'externalId',
     ];
 
     public function indicator(): BelongsTo

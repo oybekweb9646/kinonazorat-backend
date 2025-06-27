@@ -116,7 +116,7 @@ class RequestRepository
             'url' => 'aokatahlil.uz',
             'indicators' => optional($request->scoreRequestIndicators)->map(function ($indicator) {
                     return [
-                        'externalId' => (string)$indicator->id,
+                        'externalId' => $indicator->externalId,
                         'name' => $indicator->indicator?->{LanguageHelper::getName()},
                         'ball' => $indicator->score,
                         'translations' => [
