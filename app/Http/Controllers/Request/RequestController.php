@@ -114,7 +114,7 @@ class RequestController extends Controller
 
     public function createOrder(OrderRequest $orderRequest, int $id): JsonResponse
     {
-        return $this->requestService->createOrder($orderRequest, $id);
+        return response()->json($this->requestService->createOrder($orderRequest, $id));
     }
 
     public function requestArchive(ActRequest $actRequest, int $id): JsonResponse
