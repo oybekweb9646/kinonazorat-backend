@@ -27,6 +27,7 @@ readonly class OmbudsmanRequestService
      */
     public function fetchAccessToken(): FetchAccessTokenOmbudsmanDto
     {
+        dd($this->getFormParamsForAccessToken());
         $httpResponse = Http::asForm()
             ->post($this->tokenUrl, $this->getFormParamsForAccessToken());
 
