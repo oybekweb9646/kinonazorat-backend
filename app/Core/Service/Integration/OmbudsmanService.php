@@ -2,6 +2,7 @@
 
 namespace App\Core\Service\Integration;
 
+use App\Core\Dto\HttpClientResponse\FetchRiskAnalysisResultDto;
 use App\Core\Enums\Role\RoleEnum;
 use App\Core\Helpers\DB\Transaction;
 use App\Core\Helpers\Lang\LanguageHelper;
@@ -13,74 +14,19 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
 readonly class OmbudsmanService
 {
     public function __construct(
-        protected Transaction            $transaction,
-        protected RequestService         $requestService,
-        protected RequestRepository      $requestRepository,
+        protected Transaction             $transaction,
+        protected OmbudsmanRequestService $requestService,
+        protected RequestRepository       $requestRepository,
     )
     {
     }
 
-//    /**
-//     * @throws ConnectionException
-//     */
-//    public function checkAuthority($stir)
-//    {
-//        $fetAccessTokenDto = $this->requestService->fetchAccessToken();
-//
-//        $authorityInfo = $this->requestService->fetchAuthorityInfo($fetAccessTokenDto->access_token, $stir);
-//        $authority = $this->authorityRepository->findByStir($stir);
-//
-//        if (is_null($authority)) {
-//            $authority = new Authority();
-//        }
-//
-//        $user = auth()->user();
-//        $soato = $this->soatoRegionsRepository->findById($authorityInfo->director_soato);
-//
-//        if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
-//            if (!empty($soato)) {
-//                if ($user->organization?->region_id != $soato->parent_id) {
-//                    throw new NotFoundResourceException('Ushbu tadbirkorlik subyekti sizning hududingizga tegishli emas !!!');
-//                }
-//            } else {
-//                throw new NotFoundResourceException('Ushbu tadbirkorlik subyektining hududi belgilanmagan !!!');
-//            }
-//        }
-//
-//        $authority->fill([
-//            'stir' => $authorityInfo->stir,
-//            'name_uz' => $authorityInfo->name,
-//            'name_ru' => $authorityInfo->name,
-//            'name_uzc' => $authorityInfo->name,
-//            'billing_address' => $authorityInfo->billing_address ?? null,
-//            'billing_soato' => $authorityInfo->billing_soato ?? null,
-//            'director_address' => $authorityInfo->director_address ?? null,
-//            'director_soato' => $authorityInfo->director_soato ?? null,
-//            'director_lastName' => $authorityInfo->director_lastName ?? null,
-//            'director_middleName' => $authorityInfo->director_middleName ?? null,
-//            'director_firstName' => $authorityInfo->director_firstName ?? null,
-//            'director_gender' => $authorityInfo->director_gender ?? null,
-//            'director_nationality' => $authorityInfo->director_nationality ?? null,
-//            'director_citizenship' => $authorityInfo->director_citizenship ?? null,
-//            'director_passportNumber' => $authorityInfo->director_passportNumber ?? null,
-//            'director_stir' => $authorityInfo->director_stir ?? null,
-//            'director_pinfl' => $authorityInfo->director_pinfl ?? null,
-//            'director_countryCode' => $authorityInfo->director_countryCode ?? null,
-//            'director_passportSeries' => $authorityInfo->director_passportSeries ?? null,
-//        ]);
-//
-//        $this->transaction->wrap(function () use ($authority) {
-//            $authority->save();
-//        });
-//
-//        $request = $this->requestRepository->findNoConfirmed($authority->id);
-//
-//        return [
-//            'id' => $authority->id,
-//            'stir' => $authority->stir,
-//            'name' => $authority->{LanguageHelper::getName()},
-//            'indicator_type_id' => $request ? $request->indicator_type_id : null,
-//            'request_id' => $request ? $request->id : null,
-//        ];
-//    }
+    /**
+     * @throws ConnectionException
+     */
+    public function sendData($sendingData): FetchRiskAnalysisResultDto
+    {
+        $fetAccessTokenDto = $this->requestService->fetchAccessToken();
+        return $this->requestService->sendRiskAnalysisResult($fetAccessTokenDto->token, $sendingData);
+    }
 }

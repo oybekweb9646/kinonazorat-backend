@@ -6,6 +6,7 @@ use App\Core\Enums\Request\State;
 use App\Core\Helpers\Lang\LanguageHelper;
 use App\Models\Request;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 
 class RequestRepository
 {
@@ -99,6 +100,43 @@ class RequestRepository
         });
 
         return $query->first();
+    }
+
+    public function buildRiskAnalysisPayload(Request $request): array
+    {
+        return [
+            'externalId' => $request->request_no,
+            'inspectorInn' => $request->createdBy?->organization?->inn,
+            'inspector' => $request->createdBy?->full_name,
+            'createdAt' => Carbon::parse($request->created_at)->format('Y-m-d H:i:s'),
+            'contractorInn' => $request->authority?->stir,
+            'orderNum' => $request->order_number ?? null,
+            'orderInspector' => $request->order_inspector ?? null,
+            'totalBall' => $request->score,
+            'url' => 'aokatahlil.uz',
+            'indicators' => optional($request->scoreRequestIndicators)->map(function ($indicator) {
+                    return [
+                        'externalId' => $indicator->id,
+                        'name' => $indicator->indicator?->{LanguageHelper::getName()},
+                        'ball' => $indicator->score,
+                        'translations' => [
+                            [
+                                'languageCode' => 'uz-cyrl',
+                                'text' => $indicator->indicator?->name_uzc,
+                            ],
+                            [
+                                'languageCode' => 'uz-latn',
+                                'text' => $indicator->indicator?->name_uz,
+                            ],
+                            [
+                                'languageCode' => 'ru',
+                                'text' => $indicator->indicator?->name_ru,
+                            ]
+                        ]
+                    ];
+                })->toArray() ?? []
+
+        ];
     }
 
 }

@@ -37,11 +37,20 @@ class RequestLogService extends LogService
     }
 
 
-    public function confirmed(Request $request, array $attributes): void
+    public function sendForInsection(Request $request, array $attributes): void
     {
         $this->log(
             $request,
-            Action::REQUEST_CONFIRMED->value,
+            Action::REQUEST_SEND_FOR_INSECTION->value,
+            $attributes
+        );
+    }
+
+    public function sendArchived(Request $request, array $attributes): void
+    {
+        $this->log(
+            $request,
+            Action::REQUEST_ARCHIVED->value,
             $attributes
         );
     }

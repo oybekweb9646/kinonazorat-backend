@@ -9,6 +9,7 @@ use App\Core\Repository\Enum\IndicatorRepository;
 use App\Core\Repository\link\LinkScoreIndicatorFilesRepository;
 use App\Core\Repository\Request\RequestRepository;
 use App\Core\Repository\Request\ScoreRequestIndicatorRepository;
+use App\Core\Service\Integration\OmbudsmanService;
 use App\Core\Service\Log\Request\RequestLogService;
 use App\Core\Service\Log\ScoreRequestIndicator\ScoreRequestIndicatorLogService;
 use App\Http\Requests\Request\ActRequest;
@@ -142,7 +143,6 @@ class RequestService
 
         $attributes = $requestModel->getAttributes();
         $requestModel->status = State::SCORED;
-        $requestModel->closed_at = now()->format('Y-m-d');
 
         $this->transaction->wrap(function () use ($requestModel, $attributes) {
             $requestModel->save();
@@ -175,32 +175,46 @@ class RequestService
         return $scoreIndicatorRequest;
     }
 
-    public function createOrder(OrderRequest $orderRequest, $id): Request
+    public function createOrder(OrderRequest $orderRequest, $id)
     {
         $requestModel = $this->requestRepository->getById($id);
-        $this->transaction->wrap(function () use ($requestModel, $orderRequest) {
+        return $this->transaction->wrap(function () use ($requestModel, $orderRequest) {
 
             $requestModel->fill($orderRequest->all());
+            $attributes = $requestModel->getAttributes();
+
             $requestModel->status = State::SEND_FOR_INSECTION->value; // Tekshiruvga yuborilgan
             $requestModel->save();
 
-            // Ombudsman uchun post
+            $this->requestLogService->sendForInsection($requestModel, $attributes);
+
+            $request = Request::query()
+                ->with(['scoreRequestIndicators'])
+                ->where('id', $requestModel->id)
+                ->where('status', State::SEND_FOR_INSECTION->value)
+                ->firstOrFail();
+
+            $ombudsmanService = app(OmbudsmanService::class);
+            return $ombudsmanService->sendData($this->requestRepository->buildRiskAnalysisPayload($request));
+
         });
-        return $requestModel;
     }
 
     public function requestArchive(ActRequest $actRequest, int $id): Request
     {
         $requestModel = $this->requestRepository->getById($id);
 
-        $this->transaction->wrap(function () use ($requestModel,$actRequest) {
+        $this->transaction->wrap(function () use ($requestModel, $actRequest) {
 
-            $requestModel->fill($actRequest->all());
-            $requestModel->status = State::ARCHIVED->value; // Arxivga tushgan
-            $requestModel->save();
+            if ($requestModel->status == State::SEND_FOR_INSECTION->value) {
 
-            // Ombudsman uchun post
-
+                $requestModel->fill($actRequest->all());
+                $requestModel->status = State::ARCHIVED->value; // Arxivga tushgan
+                $requestModel->save();
+            }
+//            else{
+//
+//            }
 
         });
         return $requestModel;

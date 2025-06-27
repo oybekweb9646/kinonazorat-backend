@@ -2,8 +2,8 @@
 
 namespace App\Core\Service\Integration;
 
-use App\Core\Dto\HttpClientResponse\FetchAccessTokenMibDto;
-use App\Core\Dto\HttpClientResponse\FetchAuthorityDto;
+use App\Core\Dto\HttpClientResponse\FetchAccessTokenOmbudsmanDto;
+use App\Core\Dto\HttpClientResponse\FetchRiskAnalysisResultDto;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -22,40 +22,43 @@ readonly class OmbudsmanRequestService
     }
 
     /**
-     * @param string $code
-     * @return FetchAccessTokenMibDto
+     * @return FetchAccessTokenOmbudsmanDto
      * @throws ConnectionException
      */
-    public function fetchAccessToken(): FetchAccessTokenMibDto
+    public function fetchAccessToken(): FetchAccessTokenOmbudsmanDto
     {
         $httpResponse = Http::asForm()
             ->withHeaders([
-                'Authorization' => 'Basic ' . base64_encode($this->username . ':' . $this->password),
+                'Content-Type' => 'application/json-patch+json',
             ])
             ->post($this->tokenUrl, $this->getFormParamsForAccessToken());
 
         $this->_throwException($httpResponse);
 
-        return new FetchAccessTokenMibDto($httpResponse->json());
+        return new FetchAccessTokenOmbudsmanDto($httpResponse->json());
     }
 
     /**
      * @param string $access_token
      * @param $stir
-     * @return FetchAuthorityDto
+     * @return FetchRiskAnalysisResultDto
      * @throws ConnectionException
      */
-    public function fetchAuthorityInfo(string $access_token, $stir)
+    public function sendRiskAnalysisResult(string $accessToken, array $payload): FetchRiskAnalysisResultDto
     {
-        $httpResponse = Http::withToken($access_token)
-            ->post($this->serviceUrl, $this->getFormParamsForAuthority($stir));
+        $httpResponse = Http::withToken($accessToken)
+            ->withHeaders([
+                'Content-Type' => 'application/json-patch+json',
+            ])
+            ->post($this->serviceUrl, $payload);
 
         $this->_throwException($httpResponse);
-        if (empty($httpResponse->json())) {
-            throw new NotFoundResourceException('Bunday STIR ga ega tashkilot topilmadi!!!');
+
+        if (empty($httpResponse->json()) || !$httpResponse->json('success')) {
+            throw new NotFoundResourceException('Ma\'lumotlarni qayta ishlashda xatolik yuz berdi!');
         }
 
-        return new FetchAuthorityDto($httpResponse->json());
+        return new FetchRiskAnalysisResultDto($httpResponse->json());
     }
 
 
@@ -88,13 +91,4 @@ readonly class OmbudsmanRequestService
     }
 
 
-    /**
-     * @return array
-     */
-    public function getFormParamsForAuthority($stir): array
-    {
-        return [
-            'tin' => $stir
-        ];
-    }
 }

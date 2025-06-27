@@ -24,6 +24,8 @@ use Illuminate\Support\Carbon;
  * @property int $created_by
  * @property int $updated_by
  * @property string $registered_date
+ * @property string $created_at
+ * @property string $updated_at
  * @property string $closed_at
  * @property string $request_no
  * @property string $order_number
@@ -33,6 +35,10 @@ use Illuminate\Support\Carbon;
  * @property integer $act_file_id
  * @property string $act_number
  * @property string $act_date
+ * @property User $createdBy
+ * @property User $updatedBy
+ * @property ScoreRequestIndicator $scoreRequestIndicators
+ * @property Authority $authority
  */
 class Request extends BaseModel
 {

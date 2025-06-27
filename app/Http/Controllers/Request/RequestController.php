@@ -109,20 +109,18 @@ class RequestController extends Controller
 
     public function log(int $id)
     {
-        return  response()->json($this->logRepository->findAllByRequest($id)->paginate());
+        return response()->json($this->logRepository->findAllByRequest($id)->paginate());
     }
 
-    public function createOrder(OrderRequest $orderRequest,int $id): JsonResponse
+    public function createOrder(OrderRequest $orderRequest, int $id): JsonResponse
     {
-        $requestModel = $this->requestService->createOrder($orderRequest,$id);
-
-        return Response::success('Order created', $requestModel->toArray());
+        return $this->requestService->createOrder($orderRequest, $id);
     }
 
-    public function requestArchive(ActRequest $actRequest,int $id): JsonResponse
+    public function requestArchive(ActRequest $actRequest, int $id): JsonResponse
     {
-        $requestModel = $this->requestService->requestArchive($actRequest,$id);
+        $requestModel = $this->requestService->requestArchive($actRequest, $id);
 
-        return Response::success('Order created', $requestModel->toArray());
+        return Response::success('Request Archived', $requestModel->toArray());
     }
 }
