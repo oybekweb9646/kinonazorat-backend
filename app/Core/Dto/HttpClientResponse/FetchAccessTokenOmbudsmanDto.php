@@ -10,6 +10,7 @@ class FetchAccessTokenOmbudsmanDto
 
     public function __construct(array $response)
     {
+        dd($response);
         $this->token = $response['token'];
         $this->expireOn = $response['expire_on'];
     }
