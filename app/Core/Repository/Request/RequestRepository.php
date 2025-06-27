@@ -118,7 +118,7 @@ class RequestRepository
                     return [
                         'externalId' => $indicator->externalId,
                         'name' => $indicator->indicator?->{LanguageHelper::getName()},
-                        'ball' => $indicator->score,
+                        'ball' => (int)$indicator->score ?? 0,
                         'translations' => [
                             [
                                 'languageCode' => 'uz-cyrl',
