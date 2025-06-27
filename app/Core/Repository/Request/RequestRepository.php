@@ -55,7 +55,8 @@ class RequestRepository
     {
         $name = LanguageHelper::getName();
         return Request::query()
-            ->where('id', $id)
+            ->select(['requests.*'])
+            ->where('requests.id', $id)
             ->with([
                 'scoreRequestIndicators' => function ($query) use ($name) {
                     $query->with([
@@ -78,6 +79,9 @@ class RequestRepository
                     $query->select(['id', $name . ' as name', '*']);
                 },
             ])
+            ->addSelect(['fo.mime_type AS order_file_type', 'fa.mime_type AS act_file_type'])
+            ->leftJoin('files AS fo', 'fo.id', '=', 'requests.order_file_id')
+            ->leftJoin('files AS fa', 'fa.id', '=', 'requests.act_file_id')
             ->firstOrFail();
     }
 
