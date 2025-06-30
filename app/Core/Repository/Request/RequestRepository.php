@@ -2,7 +2,9 @@
 
 namespace App\Core\Repository\Request;
 
+use App\Core\Enums\Request\RequestAngecy;
 use App\Core\Enums\Request\State;
+use App\Core\Enums\Role\RoleEnum;
 use App\Core\Helpers\Lang\LanguageHelper;
 use App\Models\Request;
 use Illuminate\Database\Eloquent\Collection;
@@ -110,7 +112,7 @@ class RequestRepository
     {
         return [
             'externalId' => $request->request_no,
-            'inspectorInn' => $request->createdBy?->organization?->inn,
+            'inspectorInn' => (auth()->user()->role == RoleEnum::_RESPONSIBLE->value) ? RequestAngecy::AGENCY_NUMBER->value : $request->createdBy?->organization?->inn,
             'inspector' => $request->createdBy?->full_name,
             'createdAt' => Carbon::parse($request->created_at)->format('Y-m-d H:i:s'),
             'contractorInn' => $request->authority?->stir,
