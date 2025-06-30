@@ -2,7 +2,7 @@
 
 namespace App\Core\Enums\Request;
 
-enum RequestAngecy: int
+enum RequestAgency: int
 {
     case AGENCY_NUMBER = 200898285; // Axborot va ommaviy kommunikatsiyalar agentligi   200898285
 

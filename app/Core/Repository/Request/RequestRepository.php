@@ -2,7 +2,7 @@
 
 namespace App\Core\Repository\Request;
 
-use App\Core\Enums\Request\RequestAngecy;
+use App\Core\Enums\Request\RequestAgency;
 use App\Core\Enums\Request\State;
 use App\Core\Enums\Role\RoleEnum;
 use App\Core\Helpers\Lang\LanguageHelper;
@@ -89,10 +89,16 @@ class RequestRepository
 
     public function stat($max, $min): int
     {
-        return Request::query()
+        $query = Request::query()
             ->where('score', '>=', $min)
             ->where('score', '<=', $max)
-            ->count();
+            ->where('status', '!=', State::ARCHIVED->value);
+
+        if (auth()->user()->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
+            $query->where('created_by', auth()->user()->id);
+        }
+
+        return $query->count();
     }
 
     public function findNoConfirmed(int $authorityId, ?int $indicatorTypeId = null)
@@ -112,14 +118,14 @@ class RequestRepository
     {
         return [
             'externalId' => $request->request_no,
-            'inspectorInn' => (auth()->user()->role == RoleEnum::_RESPONSIBLE->value) ? RequestAngecy::AGENCY_NUMBER->value : $request->createdBy?->organization?->inn,
+            'inspectorInn' => (auth()->user()->role == RoleEnum::_RESPONSIBLE->value) ? RequestAgency::AGENCY_NUMBER->value : $request->createdBy?->organization?->inn,
             'inspector' => $request->createdBy?->full_name,
             'createdAt' => Carbon::parse($request->created_at)->format('Y-m-d H:i:s'),
             'contractorInn' => $request->authority?->stir,
             'orderNum' => $request->order_number ?? null,
             'orderInspector' => $request->order_inspector ?? null,
             'totalBall' => $request->score,
-            'url' => 'aokatahlil.uz',
+            'url' => 'https://aokatahlil.uz/',
             'indicators' => optional($request->scoreRequestIndicators)->map(function ($indicator) {
                     return [
                         'externalId' => $indicator->externalId,

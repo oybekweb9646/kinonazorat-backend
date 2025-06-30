@@ -215,8 +215,11 @@ class RequestService
 
                 $requestModel->fill($actRequest->all());
                 $requestModel->status = State::ARCHIVED->value; // Arxivga tushgan
-                $requestModel->closed_at =  now()->format('Y-m-d H:i:s');
+                $requestModel->closed_at = now()->format('Y-m-d H:i:s');
                 $requestModel->save();
+
+                $attributes = $requestModel->getAttributes();
+                $this->requestLogService->sendArchived($requestModel, $attributes);
             } else {
                 throw new AccessDeniedException('Tekshirish uchun yuborilmagan tashkilotni arxivga olib bo\'lmaydi!');
             }
