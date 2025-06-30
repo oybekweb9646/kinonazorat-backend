@@ -33,6 +33,7 @@ class ActRequest extends FormRequest
                 'date',
             ],
             'act_file_id' => [
+                'required',
                 'integer',
                 Rule::exists('files', 'id')
             ],
