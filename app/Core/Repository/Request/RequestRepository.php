@@ -90,12 +90,14 @@ class RequestRepository
     public function stat($max, $min): int
     {
         $query = Request::query()
-            ->where('score', '>=', $min)
-            ->where('score', '<=', $max)
-            ->where('status', '!=', State::ARCHIVED->value);
+            ->where('requests.score', '>=', $min)
+            ->where('requests.score', '<=', $max)
+            ->where('requests.status', '!=', State::ARCHIVED->value);
 
         if (auth()->user()->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
-            $query->where('created_by', auth()->user()->id);
+            $query->leftJoin('users', 'requests.created_by', '=', 'users.id')
+                ->leftJoin('organizations', 'users.organization_id', '=', 'organizations.id')
+                ->where('organizations.region_id', '=', auth()->user()->organization?->region_id);
         }
 
         return $query->count();
