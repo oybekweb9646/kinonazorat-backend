@@ -1,6 +1,6 @@
 services:
   php:
-    container_name: aoka_php_fpm
+    container_name: kino_php_fpm
     build:
       context: docker/php8.4
       dockerfile: php-fpm-local.docker
@@ -20,9 +20,9 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - aoka_network
+      - kino_network
   php-cli:
-    container_name: aoka_php_cli
+    container_name: kino_php_cli
     build:
       context: docker/php8.4
       dockerfile: php-cli-local.docker
@@ -41,9 +41,9 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - aoka_network
+      - kino_network
   nginx:
-    container_name: aoka_nginx
+    container_name: kino_nginx
     build:
       context: ./docker/nginx
       dockerfile: nginx.docker
@@ -61,24 +61,24 @@ services:
     depends_on:
       - php
     networks:
-      - aoka_network
+      - kino_network
   db:
-    container_name: aoka_database
+    container_name: kino_database
     image: postgres:16-alpine
     ports:
       - "${DB_LOCAL_PORT:-5436}:5432"
     volumes:
-      - "aoka_database:/var/lib/postgresql/data"
+      - "kino_database:/var/lib/postgresql/data"
       - "./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf"
       - "./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf"
     environment:
       PGUSER: ${DB_USERNAME:-root}
-      POSTGRES_DB: ${DB_DATABASE:-aoka_database}
+      POSTGRES_DB: ${DB_DATABASE:-kino_database}
       POSTGRES_USER: ${DB_USERNAME:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-secret!}
       POSTGRES_HOST_AUTH_METHOD: trust
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready", "-d", "${DB_DATABASE:-aoka_database}" ]
+      test: [ "CMD-SHELL", "pg_isready", "-d", "${DB_DATABASE:-kino_database}" ]
       interval: 30s
       timeout: 60s
       retries: 5
@@ -90,11 +90,11 @@ services:
         max-file: "3"
     restart: unless-stopped
     networks:
-      - aoka_network
+      - kino_network
 volumes:
-  aoka_database:
+  kino_database:
     external: true
 
 networks:
-  aoka_network:
+  kino_network:
     external: true
