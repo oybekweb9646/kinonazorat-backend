@@ -17,7 +17,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y  \
     libyaml-dev \
     && docker-php-source extract \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
+    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install opcache \
     && docker-php-ext-install  \
     sockets \
