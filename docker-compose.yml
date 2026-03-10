@@ -48,7 +48,7 @@ services:
       context: ./docker/nginx
       dockerfile: nginx.docker
     ports:
-      - "${NGINX_LOCAL_PORT:-12002}:80"
+      - "127.0.0.1:${NGINX_LOCAL_PORT:-12002}:80"
     volumes:
       - "./:/var/www/app"
       - "./docker/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro"
