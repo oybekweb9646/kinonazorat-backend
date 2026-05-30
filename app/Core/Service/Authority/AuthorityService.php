@@ -102,7 +102,7 @@ class AuthorityService
         return [
             'id' => $authority ? $authority->id : null,
             'stir' => $authority ? $authority->stir : null,
-            'name' => $authority ? $authority->{LanguageHelper::getName()} ? null,
+            'name' => $authority ? $authority->{LanguageHelper::getName()} : null,
             'indicator_type_id' => $request ? $request->indicator_type_id : null,
             'request_id' => $request ? $request->id : null,
         ];
