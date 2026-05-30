@@ -9,6 +9,7 @@ use App\Core\Service\Authority\AuthorityService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Authority\AuthorityFormRequest;
 use App\Http\Requests\Authority\AuthorityRequest;
+use App\Http\Requests\Integration\StirRequest;
 use Illuminate\Http\JsonResponse;
 
 class AuthorityController extends Controller
@@ -57,9 +58,9 @@ class AuthorityController extends Controller
     {
         return $this->authorityRepository->getById($id);
     }
-    public function getByInn(string $inn)
+    public function getByInn(StirRequest $request)
     {
-        return $this->authorityService->checkAuthority($inn);
+        return $this->authorityService->checkAuthority($request->stir);
     }
 
     public function excelUpload(AuthorityRequest $request): JsonResponse
