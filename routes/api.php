@@ -368,6 +368,22 @@ Route::controller(AuthorityController::class)
         Route::post('authority/get/{id}', 'get')
             ->middleware(CheckRole::class . ':' . $roles)
             ->name('authority.get');
+
+        Route::post('authority/get-by-inn/{inn}', 'get')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('authority.getByInn');
+
+        Route::post('authority/create', 'create')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('authority.create');
+
+        Route::post('authority/update/{id}', 'update')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('authority.update');
+
+        Route::get('authority/delete/{id}', 'delete')
+            ->middleware(CheckRole::class . ':' . $roles)
+            ->name('authority.delete');
     });
 
 Route::controller(FileManagerController::class)

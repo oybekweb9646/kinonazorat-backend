@@ -3,10 +3,14 @@
 namespace App\Core\Service\Authority;
 
 use App\Core\Helpers\DB\Transaction;
+use App\Core\Helpers\Lang\LanguageHelper;
 use App\Core\Repository\Authority\AuthorityRepository;
+use App\Core\Repository\Request\RequestRepository;
 use App\Core\Repository\User\UserRepository;
+use App\Http\Requests\Authority\AuthorityFormRequest;
 use App\Http\Requests\Authority\AuthorityRequest;
 use App\Models\Authority;
+use App\Models\Organization;
 use App\Models\User;
 
 class AuthorityService
@@ -14,7 +18,8 @@ class AuthorityService
     public function __construct(
         private AuthorityRepository $authorityRepository,
         private UserRepository      $userRepository,
-        private Transaction         $transaction
+        private Transaction         $transaction,
+        private RequestRepository   $requestRepository,
     )
     {
     }
@@ -43,5 +48,60 @@ class AuthorityService
         });
 
         return true;
+    }
+
+
+    public function create(AuthorityFormRequest $request): Authority
+    {
+        $organization = new Authority();
+
+        $organization->fill($request->all());
+
+        $this->transaction->wrap(function () use ($organization) {
+            $organization->save();
+        });
+
+        return $organization;
+    }
+
+    public function update(AuthorityFormRequest $request, int $id): Authority
+    {
+        $organization = $this->authorityRepository->getByIdObject($id);
+
+        $organization->fill($request->all());
+
+        $this->transaction->wrap(function () use ($organization) {
+            $organization->save();
+        });
+
+        return $organization;
+    }
+
+    public function delete(int $id): Authority
+    {
+        $organization = $this->authorityRepository->getByIdObject($id);
+
+        $this->transaction->wrap(function () use ($organization) {
+            $organization->delete();
+        });
+
+        return $organization;
+    }
+
+    /**
+     * @throws ConnectionException
+     */
+    public function checkAuthority($stir): array
+    {
+        $authority = $this->authorityRepository->getByStir($stir);
+        $request = $this->requestRepository->findNoConfirmed($authority->id);
+
+        return [
+            'id' => $authority->id,
+            'stir' => $authority->stir,
+            'name' => $authority->{LanguageHelper::getName()},
+            'indicator_type_id' => $request ? $request->indicator_type_id : null,
+            'request_id' => $request ? $request->id : null,
+        ];
     }
 }

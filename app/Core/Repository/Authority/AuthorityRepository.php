@@ -3,6 +3,7 @@
 namespace App\Core\Repository\Authority;
 
 use App\Models\Authority;
+use App\Models\Organization;
 
 class AuthorityRepository
 {
@@ -25,10 +26,17 @@ class AuthorityRepository
             ->firstOrFail();
     }
 
-    public function getByStir(int $stir)
+public function getByStir(int $stir)
     {
         return Authority::query()
             ->where('stir', $stir)
+            ->firstOrFail();
+    }
+
+    public function getByIdObject(int $id)
+    {
+        return Authority::query()
+            ->where('id', $id)
             ->firstOrFail();
     }
 
