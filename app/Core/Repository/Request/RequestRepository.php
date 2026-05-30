@@ -127,7 +127,7 @@ class RequestRepository
             'orderNum' => $request->order_number ?? null,
             'orderInspector' => $request->order_inspector ?? null,
             'totalBall' => $request->score,
-            'url' => 'https://aokatahlil.uz/',
+            'url' => 'https://uzbkinonazorat.uz/',
             'indicators' => optional($request->scoreRequestIndicators)->map(function ($indicator) {
                     return [
                         'externalId' => $indicator->externalId,
