@@ -369,7 +369,7 @@ Route::controller(AuthorityController::class)
             ->middleware(CheckRole::class . ':' . $roles)
             ->name('authority.get');
 
-        Route::post('authority/get-by-inn', 'get')
+        Route::post('authority/get-by-inn', 'POST')
             ->middleware(CheckRole::class . ':' . $roles)
             ->name('authority.getByInn');
 
