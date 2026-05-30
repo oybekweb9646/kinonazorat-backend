@@ -93,8 +93,11 @@ class AuthorityService
      */
     public function checkAuthority($stir): array
     {
-        $authority = $this->authorityRepository->getByStir($stir);
-        $request = $this->requestRepository->findNoConfirmed($authority->id);
+        $authority = $this->authorityRepository->findByStir($stir);
+        $request = null;
+        if (!$authority) {
+            $request = $this->requestRepository->findNoConfirmed($authority->id);
+        }
 
         return [
             'id' => $authority->id,
