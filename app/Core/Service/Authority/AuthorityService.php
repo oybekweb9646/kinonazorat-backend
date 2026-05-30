@@ -95,7 +95,7 @@ class AuthorityService
     {
         $authority = $this->authorityRepository->findByStir($stir);
         $request = null;
-        if (!$authority) {
+        if (isset($authority)) {
             $request = $this->requestRepository->findNoConfirmed($authority->id);
         }
 
