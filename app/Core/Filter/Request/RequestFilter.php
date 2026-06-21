@@ -15,13 +15,15 @@ class RequestFilter extends BaseFilter
         $name = LanguageHelper::getName();
         $user = auth()->user();
 
-        return Request::query()
-            ->whereHas('authority.directorSoato', function ($q) use ($user) {
-                if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
-                    $q->where('parent_id', $user->organization?->region_id);
-                }
-            })
-            ->with([
+        $query = Request::query();
+
+        if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
+            $query->whereHas('authority.directorSoato', function ($q) use ($user) {
+                $q->where('parent_id', $user->organization?->region_id);
+            });
+        }
+
+        return $query->with([
                 'indicatorType' => function ($query) use ($name) {
                     $query->select(['id', $name . ' as name']);
                 },

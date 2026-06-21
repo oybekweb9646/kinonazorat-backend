@@ -14,16 +14,19 @@ class AuthorityFilter extends BaseFilter
     {
         $name = LanguageHelper::getName();
         $user = auth()->user();
-        return Authority::query()
+        $query = Authority::query()
             ->select([
                 $name . ' as name',
                 '*'
-            ])
-            ->whereHas('directorSoato', function ($q) use ($user) {
-                if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
-                    $q->where('parent_id', $user->organization?->region_id);
-                }
+            ]);
+
+        if ($user->role == RoleEnum::_TERRITORIAL_RESPONSIBLE->value) {
+            $query->whereHas('directorSoato', function ($q) use ($user) {
+                $q->where('parent_id', $user->organization?->region_id);
             });
+        }
+
+        return $query;
     }
 
     /**
