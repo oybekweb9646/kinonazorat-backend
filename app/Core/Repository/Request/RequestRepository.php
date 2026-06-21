@@ -131,6 +131,7 @@ class RequestRepository
             'indicators' => optional($request->scoreRequestIndicators)->map(function ($indicator) {
                     return [
                         'externalId' => $indicator->externalId,
+                        'url' => 'https://uzbkinonazorat.uz/',
                         'name' => $indicator->indicator?->{LanguageHelper::getName()},
                         'ball' => (int)$indicator->score ?? 0,
                         'translations' => [

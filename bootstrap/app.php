@@ -2,6 +2,7 @@
 use App\Core\Enums\Routes\RoutePrefixEnum;
 use App\Exceptions\ForbiddenAccessException;
 use App\Http\Middleware\JwtAuthenticate;
+use App\Http\Middleware\LogActivity;
 use App\Http\Middleware\SetUpLanguageMiddleware;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -29,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->api([
             SetUpLanguageMiddleware::class,
+            LogActivity::class,
         ]);
 
         $middleware->alias(['jwt.verify' => JwtAuthenticate::class]);

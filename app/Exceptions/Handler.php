@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Models\ErrorLog;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -41,10 +44,35 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            if ($e instanceof ValidationException) {
+                return;
+            }
+
+            try {
+                /** @var Request $request */
+                $request = request();
+                $user = auth('api')->user();
+
+                ErrorLog::create([
+                    'user_id'         => $user?->id,
+                    'username'        => $user?->username ?? $user?->full_name,
+                    'user_role'       => $user?->role,
+                    'method'          => $request?->method(),
+                    'url'             => $request?->path(),
+                    'message'         => $e->getMessage(),
+                    'exception_class' => get_class($e),
+                    'file'            => $e->getFile(),
+                    'line'            => $e->getLine(),
+                    'trace'           => substr($e->getTraceAsString(), 0, 3000),
+                    'ip_address'      => $request?->ip(),
+                    'status_code'     => method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500,
+                ]);
+            } catch (\Throwable) {
+                // Error log yozishda xatolik bo'lsa tizim to'xtamasin
+            }
         });
     }
 }

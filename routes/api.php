@@ -3,6 +3,7 @@
 use App\Core\Enums\Role\RoleEnum;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Authority\AuthorityController;
+use App\Http\Controllers\Log\LogController;
 use App\Http\Controllers\Checklist\ChecklistAuthorityController;
 use App\Http\Controllers\Checklist\ChecklistController;
 use App\Http\Controllers\Enum\IndicatorController;
@@ -394,6 +395,19 @@ Route::controller(FileManagerController::class)
 
         Route::get('file/download/{id}', 'download')
             ->name('file.download');
+    });
+
+$logRoles = implode(',', [
+    RoleEnum::_SUPER_ADMIN->value,
+    RoleEnum::_PROKUROR->value,
+]);
+
+Route::controller(LogController::class)
+    ->middleware(['jwt.verify', CheckRole::class . ':' . $logRoles])
+    ->group(function () {
+        Route::post('logs/activity', 'activityFilter')->name('logs.activity');
+        Route::post('logs/errors', 'errorFilter')->name('logs.errors');
+        Route::get('logs/stats', 'activityStats')->name('logs.stats');
     });
 
 
