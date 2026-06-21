@@ -23,27 +23,33 @@ class AuthorityFormRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('id');
+
         return [
             'stir' => [
                 'required',
                 'string',
-                Rule::unique('authority','name_uz')->ignore($this->id),
+                Rule::unique('authority', 'stir')->ignore($id),
             ],
             'name_uz' => [
+                'nullable',
                 'string',
-                Rule::unique('authority','name_ru')->ignore($this->id),
+                Rule::unique('authority', 'name_uz')->ignore($id),
             ],
             'name_uzc' => [
+                'nullable',
                 'string',
-                Rule::unique('authority','name_uzc')->ignore($this->id),
+                Rule::unique('authority', 'name_uzc')->ignore($id),
             ],
             'name_ru' => [
+                'nullable',
                 'string',
-                Rule::unique('authority','name_uzc')->ignore($this->id),
+                Rule::unique('authority', 'name_ru')->ignore($id),
             ],
             'address' => [
-                'string'
-            ]
+                'nullable',
+                'string',
+            ],
         ];
     }
 }
