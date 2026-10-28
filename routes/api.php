@@ -11,6 +11,7 @@ use App\Http\Controllers\Enum\IndicatorTypeController;
 use App\Http\Controllers\Enum\OrganizationController;
 use App\Http\Controllers\Enum\SoatoRegionController;
 use App\Http\Controllers\File\FileManagerController;
+use App\Http\Controllers\Integration\IntegrationAdminController;
 use App\Http\Controllers\Integration\MibIntegrationController;
 use App\Http\Controllers\Integration\MspdIntegrationController;
 use App\Http\Controllers\Question\QuestionAuthorityController;
@@ -427,6 +428,22 @@ Route::controller(MspdIntegrationController::class)
         Route::get('risk-results/by-stir/{stir}', 'riskResultByStir')
             ->whereNumber('stir')
             ->name('integration.risk-result.by-stir');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| MSPD integratsiyasini boshqarish (admin, faqat SUPER_ADMIN)
+|--------------------------------------------------------------------------
+*/
+Route::controller(IntegrationAdminController::class)
+    ->middleware(['jwt.verify', CheckRole::class . ':' . RoleEnum::_SUPER_ADMIN->value])
+    ->prefix('integration-admin')
+    ->group(function () {
+        Route::get('settings', 'settings')->name('integration-admin.settings');
+        Route::post('settings', 'updateSettings')->name('integration-admin.settings.update');
+        Route::post('regenerate-token', 'regenerateToken')->name('integration-admin.regenerate-token');
+        Route::post('logs', 'logs')->name('integration-admin.logs');
+        Route::get('logs/stats', 'logStats')->name('integration-admin.logs.stats');
     });
 
 

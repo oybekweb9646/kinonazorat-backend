@@ -24,16 +24,20 @@ Integratsiya **server-to-server** rejimida ishlaydi. MSPD tomonidan statik token
 
 ## 2. Autentifikatsiya
 
-Har bir soʻrovda **ikkala** shart ham bajarilishi kerak:
+Har bir soʻrovda **token** (majburiy) va — IP cheklovi yoqilgan boʻlsa — **ruxsat etilgan IP** shart.
 
-1. **Bearer token** — `Authorization` sarlavhasida:
+1. **Token** — ikki usuldan biri bilan yuboriladi (ikkalasi ham ishlaydi):
+   ```
+   X-Api-Token: <TOKEN>
+   ```
+   yoki
    ```
    Authorization: Bearer <TOKEN>
    ```
+   > **Tavsiya:** `X-Api-Token` — eng sodda va xatosiz. `Authorization` ishlatilsa, `Bearer` soʻzi + bitta probel + token boʻlishi shart.
    > Token xavfsiz kanal orqali alohida topshiriladi. Ushbu hujjatga yozilmaydi.
-   > Muqobil sarlavha ham qoʻllanadi: `X-Api-Token: <TOKEN>`
 
-2. **IP manzil** — soʻrov faqat `10.190.0.102` IP manzilidan kelishi shart.
+2. **IP manzil** — IP cheklovi yoqilgan boʻlsa, soʻrov faqat ruxsat etilgan IP (`10.190.0.102`) dan kelishi shart. IP tekshiruvi faqat ishonchli (teskari proksi oʻrnatgan) manbadan olinadi — `X-Forwarded-For` orqali soxtalashtirib boʻlmaydi. Cheklov admin panelidan oʻchirilgan boʻlsa (token-only rejimi) — faqat token tekshiriladi.
 
 Shartlar bajarilmasa:
 
@@ -315,7 +319,31 @@ Misol: `Accept-Language: ru`
 
 - [ ] Token xavfsiz kanal orqali qabul qilindi va saqlandi
 - [ ] Soʻrovlar `10.190.0.102` IP manzilidan yuboriladi
-- [ ] Har soʻrovda `Authorization: Bearer <TOKEN>` sarlavhasi bor
+- [ ] Har soʻrovda `X-Api-Token: <TOKEN>` (yoki `Authorization: Bearer <TOKEN>`) sarlavhasi bor
 - [ ] `GET /integration/risk-results` — roʻyxat olinadi
 - [ ] `GET /integration/risk-results/by-stir/{stir}` — STIR boʻyicha olinadi
 - [ ] Zarur til uchun `Accept-Language` sarlavhasi qoʻyiladi
+
+---
+
+## 10. Boshqaruv (ichki — admin panel)
+
+Integratsiya tizim ichidan **SUPER_ADMIN** tomonidan boshqariladi: *Sozlamalar → MSPD integratsiyasi* (`/settings/integration`). Sozlamalar DB'da saqlanadi (`.env` faqat dastlabki qiymat uchun).
+
+**Imkoniyatlar:**
+- **Token** — joriy tokenni koʻrish, nusxalash va **yangilash** (regenerate). Yangilangach eski token ishlamaydi — MSPD'ga yangisini berish kerak.
+- **IP cheklovi** — yoqish/oʻchirish. Oʻchirilsa **token-only** rejimi (istalgan IP'dan, faqat token bilan).
+- **Ruxsat etilgan IP'lar** — roʻyxatni tahrirlash (masalan `10.190.0.102`).
+- **Loglar** — har bir soʻrov (ruxsat berilgan/rad etilgan, IP, natija, sana) filtr va sahifalash bilan.
+
+**Admin API** (JWT + SUPER_ADMIN, frontend shulardan foydalanadi):
+
+| Metod | Endpoint | Tavsif |
+|-------|----------|--------|
+| GET | `/api/integration-admin/settings` | Joriy sozlama (token, ip_check_enabled, allowed_ips) |
+| POST | `/api/integration-admin/settings` | `ip_check_enabled` va `allowed_ips` ni yangilash |
+| POST | `/api/integration-admin/regenerate-token` | Yangi token generatsiya |
+| POST | `/api/integration-admin/logs` | Loglar (filtr: reason, client_ip, allowed, date_from/to, page, size) |
+| GET | `/api/integration-admin/logs/stats` | Statistika (total/allowed/denied/today) |
+
+**Log natijalari (`reason`):** `ok` (ruxsat), `invalid_token` (xato/yoʻq token), `ip_denied` (IP rad), `not_configured` (token sozlanmagan).
