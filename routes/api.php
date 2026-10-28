@@ -12,6 +12,7 @@ use App\Http\Controllers\Enum\OrganizationController;
 use App\Http\Controllers\Enum\SoatoRegionController;
 use App\Http\Controllers\File\FileManagerController;
 use App\Http\Controllers\Integration\MibIntegrationController;
+use App\Http\Controllers\Integration\MspdIntegrationController;
 use App\Http\Controllers\Question\QuestionAuthorityController;
 use App\Http\Controllers\Question\QuestionController;
 use App\Http\Controllers\Request\RequestController;
@@ -408,6 +409,24 @@ Route::controller(LogController::class)
         Route::post('logs/activity', 'activityFilter')->name('logs.activity');
         Route::post('logs/errors', 'errorFilter')->name('logs.errors');
         Route::get('logs/stats', 'activityStats')->name('logs.stats');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| MSPD integration (server-to-server, read-only)
+|--------------------------------------------------------------------------
+| Statik token + IP allowlist bilan himoyalangan. JWT/OneID ishlatilmaydi.
+*/
+Route::controller(MspdIntegrationController::class)
+    ->middleware('integration.auth')
+    ->prefix('integration')
+    ->group(function () {
+        Route::get('risk-results', 'riskResults')
+            ->name('integration.risk-results');
+
+        Route::get('risk-results/by-stir/{stir}', 'riskResultByStir')
+            ->whereNumber('stir')
+            ->name('integration.risk-result.by-stir');
     });
 
 

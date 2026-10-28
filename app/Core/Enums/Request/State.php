@@ -17,4 +17,20 @@ enum State: int
     {
         return array_column(self::cases(), 'value');
     }
+
+    /**
+     * Holatning inson o'qiydigan nomi (uz).
+     *
+     * @return string
+     */
+    public function label(): string
+    {
+        return match ($this) {
+            self::CREATED => 'Yaratilgan',
+            self::PARTLY_SCORED => 'Qisman baholangan',
+            self::SCORED => 'Yakunlangan',
+            self::SEND_FOR_INSECTION => 'Tekshiruvga yuborilgan',
+            self::ARCHIVED => 'Arxivlangan',
+        };
+    }
 }

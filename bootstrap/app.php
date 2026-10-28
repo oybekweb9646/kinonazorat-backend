@@ -1,6 +1,7 @@
 <?php
 use App\Core\Enums\Routes\RoutePrefixEnum;
 use App\Exceptions\ForbiddenAccessException;
+use App\Http\Middleware\IntegrationAuth;
 use App\Http\Middleware\JwtAuthenticate;
 use App\Http\Middleware\LogActivity;
 use App\Http\Middleware\SetUpLanguageMiddleware;
@@ -33,7 +34,10 @@ return Application::configure(basePath: dirname(__DIR__))
             LogActivity::class,
         ]);
 
-        $middleware->alias(['jwt.verify' => JwtAuthenticate::class]);
+        $middleware->alias([
+            'jwt.verify' => JwtAuthenticate::class,
+            'integration.auth' => IntegrationAuth::class,
+        ]);
 
     })
     ->withExceptions(function (Exceptions $exceptions) {
