@@ -40,7 +40,12 @@ class IntegrationAuth
     }
 
     /**
-     * So'rovning manba IP'si allowlist'da bormi (proksilarni ham hisobga olib).
+     * So'rovning haqiqiy manba IP'si allowlist'da bormi.
+     *
+     * DIQQAT: faqat ishonchli (teskari proksi tomonidan o'rnatilgan) manbalardan
+     * foydalanamiz. X-Forwarded-For'ning BOSHIDAGI qiymatlarni mijoz o'zi soxta
+     * yubora oladi, shuning uchun ularga ishonmaymiz — faqat X-Real-IP va XFF'ning
+     * OXIRGI (nginx qo'shgan) qiymatini olamiz.
      *
      * @param Request $request
      * @param array<int, string> $allowedIps
@@ -48,16 +53,36 @@ class IntegrationAuth
      */
     protected function ipAllowed(Request $request, array $allowedIps): bool
     {
-        $candidates = array_merge(
-            [$request->ip()],
-            $request->ips(),
-            [$request->header('X-Real-IP')],
-            array_map('trim', explode(',', (string) $request->header('X-Forwarded-For')))
-        );
+        $clientIp = $this->trustedClientIp($request);
 
-        $candidates = array_values(array_unique(array_filter($candidates)));
+        return $clientIp !== null && in_array($clientIp, $allowedIps, true);
+    }
 
-        return count(array_intersect($candidates, $allowedIps)) > 0;
+    /**
+     * Teskari proksi orqasida ishonchli mijoz IP'sini aniqlaydi.
+     *
+     * @param Request $request
+     * @return string|null
+     */
+    protected function trustedClientIp(Request $request): ?string
+    {
+        // 1) X-Real-IP — nginx tomonidan $remote_addr'dan o'rnatiladi (soxtalashtirib bo'lmaydi).
+        $realIp = trim((string) $request->header('X-Real-IP'));
+        if ($realIp !== '') {
+            return $realIp;
+        }
+
+        // 2) X-Forwarded-For'ning OXIRGI qiymati — proksi qo'shadi, mijoz boshqarolmaydi.
+        $xff = (string) $request->header('X-Forwarded-For');
+        if ($xff !== '') {
+            $parts = array_values(array_filter(array_map('trim', explode(',', $xff))));
+            if ($parts !== []) {
+                return end($parts);
+            }
+        }
+
+        // 3) Proksi yo'q bo'lsa — to'g'ridan-to'g'ri ulanish IP'si.
+        return $request->ip();
     }
 
     /**
